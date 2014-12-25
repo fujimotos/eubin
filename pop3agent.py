@@ -102,3 +102,19 @@ class Maildir:
 
         os.link(tmpfile, newfile)
         os.remove(tmpfile)
+
+#
+# Main
+def get_configs(confdir, suffix):
+    import configparser
+
+    for fname in os.listdir(confdir):
+        path = os.path.join(confdir, fname)
+
+        if not os.path.isfile(path) or not fname.endswith(suffix):
+            continue
+
+        config = configparser.ConfigParser(interpolation=None)
+        config.read(path)
+
+        yield config
