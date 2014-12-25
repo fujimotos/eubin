@@ -1,0 +1,11 @@
+#!/usr/bin/env python
+
+import poplib
+
+class POP3Agent:
+    def __init__(self, host, port, debug=0):
+        self.pop3 = poplib.POP3(host, port)
+        self.pop3.set_debuglevel(debug)
+
+    def quit(self):
+        self.pop3.quit()
