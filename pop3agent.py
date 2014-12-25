@@ -118,3 +118,19 @@ def get_configs(confdir, suffix):
         config.read(path)
 
         yield config
+
+def get_password(token, passtype):
+    from subprocess import check_output
+    import shlex
+
+    password = None
+
+    if passtype == 'plain':
+        password = token
+    elif passtype == 'shell':
+        result = check_output(shlex.split(token))
+        password = result.decode().rstrip('\n')
+    else:
+        raise ValueError('invalid password type: {}'.format(passtype))
+
+    return password
