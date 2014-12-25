@@ -134,3 +134,39 @@ def get_password(token, passtype):
         raise ValueError('invalid password type: {}'.format(passtype))
 
     return password
+
+def main():
+    confdir = os.path.expanduser('~/.pop3agent')
+    suffix = '.conf'
+
+    for config in get_configs(confdir, suffix):
+        server, account, retrieval, security = \
+            (config[key] for key in ('server', 'account', 'retrieval', 'security'))
+
+        # Initiate the connection
+        host, port = server['host'], server['port']
+        overssl = security.getboolean('overssl')
+
+        if overssl:
+            agent = POP3AgentSSL(host, port, debug=2)
+        else:
+            agent = POP3Agent(host, port)
+
+        # Authorization
+        user = account['user']
+        password = get_password(account['pass'], account['passtype'])
+        apop = security.getboolean('apop')
+
+        agent.login(user, password, apop=apop)
+
+        # Do some transaction
+        dest = os.path.expanduser(retrieval['dest'])
+        leftcopy = retrieval.getboolean('leftcopy')
+
+        agent.fetchmail(dest, leftcopy=leftcopy)
+
+        # Enter the update state.
+        agent.quit()
+
+if __name__ == '__main__':
+    main()
