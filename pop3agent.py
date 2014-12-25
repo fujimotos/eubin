@@ -16,3 +16,7 @@ class POP3Agent:
 
     def quit(self):
         self.pop3.quit()
+
+class Maildir:
+    def __init__(self, basedir):
+        self.basedir = basedir
