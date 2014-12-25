@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
 import poplib
+import os
+import socket
+import time
 
 class POP3Agent:
     def __init__(self, host, port, debug=0):
@@ -20,3 +23,9 @@ class POP3Agent:
 class Maildir:
     def __init__(self, basedir):
         self.basedir = basedir
+        self.pid = os.getpid()
+        self.hostname = socket.gethostname()
+
+    def get_uniqueid(self):
+        now = int(time.time() * 1000)  # unix epoch in milliseconds
+        return '{}.{}.{}'.format(now, self.pid, self.hostname)
