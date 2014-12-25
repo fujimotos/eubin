@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import poplib
+import ssl
 import os
 import socket
 import time
@@ -31,6 +32,9 @@ class POP3Agent:
 
     def quit(self):
         self.pop3.quit()
+
+class POP3AgentSSL(POP3Agent):
+    pass
 
 class Maildir:
     def __init__(self, basedir):
