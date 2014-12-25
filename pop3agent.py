@@ -34,6 +34,11 @@ class POP3Agent:
         self.pop3.quit()
 
 class POP3AgentSSL(POP3Agent):
+    def __init__(self, host, port, debug=2):
+        context = self.get_ssl_context()
+        self.pop3 = poplib.POP3_SSL(host, port, context=context)
+        self.pop3.set_debuglevel(debug)
+
     @staticmethod
     def get_ssl_context():
         """Create SSL context with security settings."""
