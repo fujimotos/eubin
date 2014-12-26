@@ -59,10 +59,10 @@ class POP3Server(MockServer):
         self.sendline(b'+OK Greetings, human! ' + msg_id)
 
     # Stub methods
-    def do_stat(self, args):
+    def do_stat(self):
         self.sendline(b'+OK 2 320')
 
-    def do_retr(self, args):
+    def do_retr(self, idx):
         self.sendline('+OK')
         self.sendline('From: from@example.com')
         self.sendline('To: to@example.com')
@@ -71,19 +71,19 @@ class POP3Server(MockServer):
         self.sendline('test')
         self.sendline('.')
 
-    def do_dele(self, args):
+    def do_dele(self, idx):
         self.sendline(b'+OK message deleted')
 
-    def do_apop(self, args):
+    def do_apop(self, user, md5):
         self.sendline(b'+OK apop login successful')
 
-    def do_user(self, args):
+    def do_user(self, user):
         self.sendline(b'+OK valid user name')
 
-    def do_pass(self, args):
+    def do_pass(self, password):
         self.sendline(b'+OK login successful')
 
-    def do_quit(self, args):
+    def do_quit(self):
         self.sendline(b'+OK')
         raise EOFError
 
@@ -92,7 +92,7 @@ class POP3Server(MockServer):
             raise EOFError
         tokens = line.decode().rstrip().split(' ')
         cmd, args = tokens[0].lower(), tokens[1:]
-        getattr(self, 'do_' + cmd)(args)
+        getattr(self, 'do_' + cmd)(*args)
 
     # Running server
     def run(self):
