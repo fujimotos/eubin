@@ -54,30 +54,32 @@ class POP3Server(MockServer):
     """A POP3 server stub"""
     def __init__(self):
         super(POP3Server, self).__init__()
-        self._maildata = []
 
-    def append_data(self, lines):
-        size = sum(len(line) for line in lines)
-        self._maildata.append((size, lines))
+        # fake data
+        self.msg_id = b''
+        self.maildrop = []
+        self.mailcount = 0
+        self.dropsize = 0
+
+    def set_fakedata(self, msg_id, maildrop, mailcount, dropsize):
+        self.msg_id = msg_id
+        self.maildrop = maildrop
+        self.mailcount = mailcount
+        self.dropsize = dropsize
 
     def greeting(self):
-        pid, epoch = os.getpid(), int(time.time())
-        host = self.get_conninfo()[0]
-        msg_id = '<{}.{}@{}>'.format(pid, epoch, host).encode()
-        self.sendline(b'+OK Greetings, human! ' + msg_id)
+        self.sendline(b'+OK Greetings, human! ' + self.msg_id)
 
     # Stub methods
     def do_stat(self):
-        count = str(len(self._maildata))
-        size = str(sum(m[0] for m in self._maildata))
-        resp = '+OK {} {}'.format(count, size).encode()
+        resp = '+OK {} {}'.format(self.mailcount, self.dropsize).encode()
         self.sendline(resp)
 
     def do_retr(self, idx):
-        lines = self._maildata[idx][1]
         self.sendline(b'+OK')
-        for line in lines:
+        for line in self.maildrop[idx]:
             self.sendline(line)
+        self.sendline(b'.')
 
     def do_dele(self, idx):
         self.sendline(b'+OK message deleted')
