@@ -51,6 +51,21 @@ class TestPOP3Agent(unittest.TestCase):
         self.assertEqual(next(recvlog), b'APOP user 88670a99aa1930515aae5569677fac19\r\n')
         self.assertEqual(next(recvlog), b'QUIT\r\n')
 
+    def test_fetchmail(self):
+        agent = POP3Agent(self.host, self.port)
+        agent.login('user', 'password')
+        agent.fetchmail(self.mailbox)
+        agent.quit()
+
+        recvlog = self.server.get_logiter()
+
+        self.assertEqual(next(recvlog), b'USER user\r\n')
+        self.assertEqual(next(recvlog), b'PASS password\r\n')
+        self.assertEqual(next(recvlog), b'STAT\r\n')
+        self.assertEqual(next(recvlog), b'RETR 1\r\n')
+        self.assertEqual(next(recvlog), b'RETR 2\r\n')
+        self.assertEqual(next(recvlog), b'QUIT\r\n')
+
 class TestMaildir(unittest.TestCase):
     def test_get_uniqueid(self):
         m = Maildir('/tmp/')
