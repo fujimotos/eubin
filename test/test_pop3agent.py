@@ -66,6 +66,24 @@ class TestPOP3Agent(unittest.TestCase):
         self.assertEqual(next(recvlog), b'RETR 2\r\n')
         self.assertEqual(next(recvlog), b'QUIT\r\n')
 
+    def test_fetchmail_contents(self):
+        agent = POP3Agent(self.host, self.port)
+        agent.login('user', 'password')
+        agent.fetchmail(self.mailbox)
+        agent.quit()
+
+        # Enter into 'new' directory of the mailbox.
+        os.chdir(os.path.join(self.mailbox, 'new'))
+
+        # There must be two mails exactly.
+        mails = os.listdir('./')
+        self.assertEqual(len(mails), 2)
+
+        # Check the contents of these mails.
+        for mail in mails:
+            with open(mail, 'rb') as fp:
+                self.assertEqual(fp.read(), b'<mail-text>\n')
+
 class TestMaildir(unittest.TestCase):
     def test_get_uniqueid(self):
         m = Maildir('/tmp/')
