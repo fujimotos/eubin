@@ -74,13 +74,10 @@ class POP3Server(MockServer):
         self.sendline(resp)
 
     def do_retr(self, idx):
-        self.sendline('+OK')
-        self.sendline('From: from@example.com')
-        self.sendline('To: to@example.com')
-        self.sendline('Subject: this it test mail')
-        self.sendline('')
-        self.sendline('test')
-        self.sendline('.')
+        lines = self._maildata[idx][1]
+        self.sendline(b'+OK')
+        for line in lines:
+            self.sendline(line)
 
     def do_dele(self, idx):
         self.sendline(b'+OK message deleted')
