@@ -16,6 +16,7 @@ class TestPOP3Agent(unittest.TestCase):
             'pass': b'+OK Passowrd ok\r\n',
             'apop': b'+OK Authentication successful\r\n',
             'stat': b'+OK 2 320\r\n',
+            'dele': b'+OK Mark the mail as deleted.\r\n',
             'retr': b'+OK\r\n<mail-text>\r\n.\r\n',
             'quit': b'+OK Good bye!'
         })
@@ -66,6 +67,23 @@ class TestPOP3Agent(unittest.TestCase):
         self.assertEqual(next(recvlog), b'RETR 2\r\n')
         self.assertEqual(next(recvlog), b'QUIT\r\n')
 
+    def test_fetchmail_nocopy(self):
+        agent = POP3Agent(self.host, self.port)
+        agent.login('user', 'password')
+        agent.fetchmail(self.mailbox, leavecopy=False)
+        agent.quit()
+
+        recvlog = self.server.get_logiter()
+
+        self.assertEqual(next(recvlog), b'USER user\r\n')
+        self.assertEqual(next(recvlog), b'PASS password\r\n')
+        self.assertEqual(next(recvlog), b'STAT\r\n')
+        self.assertEqual(next(recvlog), b'RETR 1\r\n')
+        self.assertEqual(next(recvlog), b'DELE 1\r\n')
+        self.assertEqual(next(recvlog), b'RETR 2\r\n')
+        self.assertEqual(next(recvlog), b'DELE 2\r\n')
+        self.assertEqual(next(recvlog), b'QUIT\r\n')
+
     def test_fetchmail_contents(self):
         agent = POP3Agent(self.host, self.port)
         agent.login('user', 'password')
@@ -83,6 +101,7 @@ class TestPOP3Agent(unittest.TestCase):
         for mail in mails:
             with open(mail, 'rb') as fp:
                 self.assertEqual(fp.read(), b'<mail-text>\n')
+
 
 class TestMaildir(unittest.TestCase):
     def test_get_uniqueid(self):
