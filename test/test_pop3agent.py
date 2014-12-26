@@ -36,8 +36,7 @@ class TestPOP3Agent(unittest.TestCase):
 
         recvlog = self.server.get_logiter()
         
-        digest = b'88670a99aa1930515aae5569677fac19'  # md5sum(b'<message-id>passowrd')
-        self.assertEqual(next(recvlog), b'APOP user ' + digest + b'\r\n')
+        self.assertEqual(next(recvlog), b'APOP user 88670a99aa1930515aae5569677fac19\r\n')
         self.assertEqual(next(recvlog), b'QUIT\r\n')
 
 
