@@ -1,7 +1,7 @@
 import unittest
 from threading import Thread
 from mockserver import POP3Server
-from pop3agent import POP3Agent
+from pop3agent import POP3Agent, Maildir
 
 class TestPOP3Agent(unittest.TestCase):
     def setUp(self):
@@ -39,6 +39,12 @@ class TestPOP3Agent(unittest.TestCase):
         digest = b'88670a99aa1930515aae5569677fac19'  # md5sum(b'<message-id>passowrd')
         self.assertEqual(next(recvlog), b'APOP user ' + digest + b'\r\n')
         self.assertEqual(next(recvlog), b'QUIT\r\n')
+
+
+class TestMaildir(unittest.TestCase):
+    def test_get_uniqueid(self):
+        m = Maildir('/tmp/')
+        self.assertNotEqual(m.get_uniqueid(), m.get_uniqueid())
 
 if __name__ == '__main__':
     unittest.main()
