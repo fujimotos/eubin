@@ -76,8 +76,10 @@ class Maildir:
         self.hostname = socket.gethostname()
 
     def get_uniqueid(self):
-        now = int(time.time() * 1000)  # unix epoch in milliseconds
-        return '{}.{}.{}'.format(now, self.pid, self.hostname)
+        epoch, microsec = str(time.time()).split('.')
+        urandom = ''.join('{:02x}'.format(x) for x in os.urandom(5))
+
+        return '{}.M{}R{}.{}'.format(epoch, microsec, urandom, self.hostname)
 
     def deliver(self, lines):
         os.chdir(self.basedir)
