@@ -8,6 +8,12 @@ class TestPOP3Agent(unittest.TestCase):
     def setUp(self):
         self.server = POP3Server()
         self.host, self.port = self.server.get_conninfo()
+        self.server.set_fakedata(
+            msg_id = b'<message-id>',
+            maildrop = ([b'msg1_line1', b'msg1_line2'], ['msg2_line1']),
+            mailcount = 2,
+            dropsize = 30
+        )
         Thread(target=self.server.run).start()
 
     def test_login(self):
@@ -28,8 +34,8 @@ class TestPOP3Agent(unittest.TestCase):
 
         recvlog = self.server.get_logiter()
         
-        pat = re.compile(b'^APOP user [0-9a-z]{32}\r\n')
-        self.assertTrue(pat.match(next(recvlog)))
+        digest = b'88670a99aa1930515aae5569677fac19'  # md5sum(b'<message-id>passowrd')
+        self.assertEqual(next(recvlog), b'APOP user ' + digest + b'\r\n')
         self.assertEqual(next(recvlog), b'QUIT\r\n')
 
 if __name__ == '__main__':
