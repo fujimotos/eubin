@@ -90,7 +90,8 @@ class Maildir:
             except FileNotFoundError:
                 break
             except:
-                time.sleep(2)
+                pass
+            time.sleep(2)
         else:
             raise OSError('cannot safely create a file on tmp/')
 
@@ -101,7 +102,7 @@ class Maildir:
                 fw.write(line + b'\n')
 
         os.link(tmpfile, newfile)
-        os.remove(tmpfile)
+        signal.alarm(0)
 
 #
 # Main
