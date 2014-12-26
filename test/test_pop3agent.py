@@ -1,5 +1,4 @@
 import unittest
-import re
 from threading import Thread
 from mockserver import POP3Server
 from pop3agent import POP3Agent
