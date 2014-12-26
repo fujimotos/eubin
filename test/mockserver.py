@@ -52,6 +52,14 @@ class MockServer:
 
 class POP3Server(MockServer):
     """A POP3 server stub"""
+    def __init__(self):
+        super(POP3Server, self).__init__()
+        self._maildata = []
+
+    def append_data(self, lines):
+        size = sum(len(line) for line in lines)
+        self._maildata.append((size, lines))
+
     def greeting(self):
         pid, epoch = os.getpid(), int(time.time())
         host = self.get_conninfo()[0]
@@ -60,7 +68,10 @@ class POP3Server(MockServer):
 
     # Stub methods
     def do_stat(self):
-        self.sendline(b'+OK 2 320')
+        count = str(len(self._maildata))
+        size = str(sum(m[0] for m in self._maildata))
+        resp = '+OK {} {}'.format(count, size).encode()
+        self.sendline(resp)
 
     def do_retr(self, idx):
         self.sendline('+OK')
