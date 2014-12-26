@@ -1,10 +1,14 @@
 import unittest
+import tempfile
+import shutil
+import os
 from threading import Thread
 from mockserver import POP3Server
 from pop3agent import POP3Agent, Maildir
 
 class TestPOP3Agent(unittest.TestCase):
     def setUp(self):
+        # Mocking POP3 server
         self.server = POP3Server()
         self.server.set_respdict({
             'greeting': b'+OK Greetings, Human! <message-id>\r\n',
@@ -17,6 +21,14 @@ class TestPOP3Agent(unittest.TestCase):
         })
         self.host, self.port = self.server.get_conninfo()
         Thread(target=self.server.run).start()
+
+        # Set up a mailbox
+        self.mailbox = tempfile.mkdtemp()
+        for dirname in ('new', 'cur', 'tmp'):
+            os.mkdir(os.path.join(self.mailbox, dirname))
+
+    def tearDown(self):
+        shutil.rmtree(self.mailbox)
 
     def test_login(self):
         agent = POP3Agent(self.host, self.port)
@@ -38,7 +50,6 @@ class TestPOP3Agent(unittest.TestCase):
         
         self.assertEqual(next(recvlog), b'APOP user 88670a99aa1930515aae5569677fac19\r\n')
         self.assertEqual(next(recvlog), b'QUIT\r\n')
-
 
 class TestMaildir(unittest.TestCase):
     def test_get_uniqueid(self):
