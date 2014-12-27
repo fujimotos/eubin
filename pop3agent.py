@@ -10,9 +10,8 @@ import logging
 log = logging.getLogger(__name__)
 
 class POP3Agent:
-    def __init__(self, host, port, debug=0):
+    def __init__(self, host, port):
         self.pop3 = poplib.POP3(host, port)
-        self.pop3.set_debuglevel(debug)
 
     def login(self, user, password, apop=False):
         if apop:
@@ -37,10 +36,9 @@ class POP3Agent:
         self.pop3.quit()
 
 class POP3AgentSSL(POP3Agent):
-    def __init__(self, host, port, debug=2):
+    def __init__(self, host, port):
         context = self.get_ssl_context()
         self.pop3 = poplib.POP3_SSL(host, port, context=context)
-        self.pop3.set_debuglevel(debug)
 
     @staticmethod
     def get_ssl_context():
@@ -158,7 +156,7 @@ def main():
         log.info('Connect to %s:%s [SSL=%s].', host, port, overssl)
 
         if overssl:
-            agent = POP3AgentSSL(host, port, debug=2)
+            agent = POP3AgentSSL(host, port)
         else:
             agent = POP3Agent(host, port)
 
