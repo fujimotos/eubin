@@ -24,13 +24,14 @@ class POP3Agent:
     def fetchmail(self, destdir, leavecopy=True):
         maildir = Maildir(destdir)
 
-        num, size = self.pop3.stat()
-        for idx in range(num):
+        count, size = self.pop3.stat()
+        for idx in range(count):
             msg, lines, octet = self.pop3.retr(idx+1)
             maildir.deliver(lines)
 
             if not leavecopy:
                 self.pop3.dele(idx+1)
+        return (count, size)
 
     def quit(self):
         self.pop3.quit()
