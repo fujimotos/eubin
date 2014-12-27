@@ -142,7 +142,7 @@ def get_password(token, passtype):
     return password
 
 def main():
-    logging.basicConfig(format='%(asctime)s: %(message)s', level=logging.DEBUG)
+    logging.basicConfig(format='%(asctime)s\t%(message)s', level=logging.DEBUG)
 
     confdir = os.path.expanduser('~/.pop3agent')
     suffix = '.conf'
@@ -155,6 +155,8 @@ def main():
         host, port = server['host'], server['port']
         overssl = security.getboolean('overssl')
 
+        log.info('Connect to %s:%s [SSL=%s].', host, port, overssl)
+
         if overssl:
             agent = POP3AgentSSL(host, port, debug=2)
         else:
@@ -165,15 +167,18 @@ def main():
         password = get_password(account['pass'], account['passtype'])
         apop = security.getboolean('apop')
 
+        log.info("Login as '%s' [APOP=%s]", user, apop)
         agent.login(user, password, apop=apop)
 
         # Do some transaction
         dest = os.path.expanduser(retrieval['dest'])
         leavecopy = retrieval.getboolean('leavecopy')
 
+        log.info("Start fetching mails to '%s' [leavecopy=%s]", dest, leavecopy)
         stat = agent.fetchmail(dest, leavecopy=leavecopy)
 
         # Enter the update state.
+        log.info("Delivered: %s mails (total: %s bytes)", *stat)
         agent.quit()
 
 if __name__ == '__main__':
