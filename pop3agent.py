@@ -169,9 +169,9 @@ def main():
 
         # Do some transaction
         dest = os.path.expanduser(retrieval['dest'])
-        leftcopy = retrieval.getboolean('leftcopy')
+        leavecopy = retrieval.getboolean('leavecopy')
 
-        agent.fetchmail(dest, leftcopy=leftcopy)
+        stat = agent.fetchmail(dest, leavecopy=leavecopy)
 
         # Enter the update state.
         agent.quit()
