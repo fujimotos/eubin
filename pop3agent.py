@@ -6,6 +6,8 @@ import os
 import socket
 import time
 import signal
+import logging
+log = logging.getLogger(__name__)
 
 class POP3Agent:
     def __init__(self, host, port, debug=0):
@@ -139,6 +141,8 @@ def get_password(token, passtype):
     return password
 
 def main():
+    logging.basicConfig(format='%(asctime)s: %(message)s', level=logging.DEBUG)
+
     confdir = os.path.expanduser('~/.pop3agent')
     suffix = '.conf'
 
