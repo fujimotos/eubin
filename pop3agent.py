@@ -48,7 +48,7 @@ class POP3AgentSSL(POP3Agent):
         # method (intoroduced in Python 3.4) with some modifications.
         # cf. https://docs.python.org/3.4/library/ssl.html#ssl.create
         #     _default_context
-        context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+        context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
 
         # SSLv2/SSLv3 is known to be insecure. 
         # TODO: Wait untill Python3.4 is widely adapted enough, then
