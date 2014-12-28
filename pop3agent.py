@@ -7,7 +7,7 @@ import socket
 import time
 import signal
 import logging
-log = logging.getLogger(__name__)
+_log = logging.getLogger(__name__)
 
 class POP3Agent:
     def __init__(self, host, port):
@@ -118,7 +118,7 @@ def get_configs(confdir, suffix):
         if not os.path.isfile(path) or not fname.endswith(suffix):
             continue
 
-        log.debug("Load %s.", path)
+        _log.debug("Load %s.", path)
 
         config = configparser.ConfigParser(interpolation=None)
         config.read(path)
@@ -155,7 +155,7 @@ def main():
         host, port = server['host'], server['port']
         overssl = security.getboolean('overssl')
 
-        log.info('Connect to %s:%s [SSL=%s].', host, port, overssl)
+        _log.info('Connect to %s:%s [SSL=%s].', host, port, overssl)
 
         if overssl:
             agent = POP3AgentSSL(host, port)
@@ -167,18 +167,18 @@ def main():
         password = get_password(account['pass'], account['passtype'])
         apop = security.getboolean('apop')
 
-        log.info("Login as '%s' [APOP=%s]", user, apop)
+        _log.info("Login as '%s' [APOP=%s]", user, apop)
         agent.login(user, password, apop=apop)
 
         # Do some transaction
         dest = os.path.expanduser(retrieval['dest'])
         leavecopy = retrieval.getboolean('leavecopy')
 
-        log.info('Start fetching mails to %s [leavecopy=%s]', dest, leavecopy)
+        _log.info('Start fetching mails to %s [leavecopy=%s]', dest, leavecopy)
         stat = agent.fetchmail(dest, leavecopy=leavecopy)
 
         # Enter the update state.
-        log.info("Delivered: %s mails (%s bytes)", *stat)
+        _log.info("Delivered: %s mails (%s bytes)", *stat)
         agent.quit()
 
 if __name__ == '__main__':
