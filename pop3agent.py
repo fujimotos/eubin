@@ -28,7 +28,7 @@ class POP3Agent:
             msg, lines, octet = self.pop3.retr(idx+1)
             maildir.deliver(lines)
 
-            _log.debug('* Mail#%s retrieved (%s bytes)', idx, octet)
+            _log.info('* Mail#%s retrieved (%s bytes)', idx, octet)
 
             if not leavecopy:
                 self.pop3.dele(idx+1)
@@ -100,13 +100,16 @@ class Maildir:
                 os.stat(tmpfile)
             except FileNotFoundError:
                 break
-            except:
+            except Exception as e:
+                _log.debug(e)
                 pass
             time.sleep(2)
         else:
             raise OSError('cannot safely create a file on tmp/')
 
         signal.alarm(86400) # 24-hour timer.
+
+        _log.debug("> filename: %s", uid)
 
         with open(tmpfile, 'wb') as fw:
             for line in lines:
@@ -150,7 +153,16 @@ def get_password(token, passtype):
     return password
 
 def main():
-    logging.basicConfig(format='%(asctime)s\t%(message)s', level=logging.DEBUG)
+    import getopt, sys
+
+    debug_level = logging.INFO
+
+    opts, args = getopt.getopt(sys.argv[1:], 'v')
+    for key, val in opts:
+        if key == '-v':
+            debug_level -= 10
+
+    logging.basicConfig(format='%(asctime)s\t%(message)s', level=debug_level)
 
     confdir = os.path.expanduser('~/.pop3agent')
     suffix = '.conf'
