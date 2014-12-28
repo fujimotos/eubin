@@ -28,8 +28,11 @@ class POP3Agent:
             msg, lines, octet = self.pop3.retr(idx+1)
             maildir.deliver(lines)
 
+            _log.debug('* Mail#%s retrieved (%s bytes)', idx, octet)
+
             if not leavecopy:
                 self.pop3.dele(idx+1)
+
         return (count, size)
 
     def quit(self):
