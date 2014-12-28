@@ -118,6 +118,8 @@ def get_configs(confdir, suffix):
         if not os.path.isfile(path) or not fname.endswith(suffix):
             continue
 
+        log.debug("Load %s.", path)
+
         config = configparser.ConfigParser(interpolation=None)
         config.read(path)
 
@@ -172,11 +174,11 @@ def main():
         dest = os.path.expanduser(retrieval['dest'])
         leavecopy = retrieval.getboolean('leavecopy')
 
-        log.info("Start fetching mails to '%s' [leavecopy=%s]", dest, leavecopy)
+        log.info('Start fetching mails to %s [leavecopy=%s]', dest, leavecopy)
         stat = agent.fetchmail(dest, leavecopy=leavecopy)
 
         # Enter the update state.
-        log.info("Delivered: %s mails (total: %s bytes)", *stat)
+        log.info("Delivered: %s mails (%s bytes)", *stat)
         agent.quit()
 
 if __name__ == '__main__':
