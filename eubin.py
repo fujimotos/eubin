@@ -9,6 +9,17 @@ import signal
 import logging
 _log = logging.getLogger(__name__)
 
+#--------------------
+# Initialization
+#--------------------
+CONF_DIR = os.path.expanduser('~/.eubin')
+CONF_SUFFIX = '.conf'
+LOG_FORMAT = '%(asctime)s\t%(message)s'
+
+
+#--------------------
+# Exported Classes
+#--------------------
 class Eubin:
     def __init__(self, host, port):
         self.pop3 = poplib.POP3(host, port)
@@ -78,6 +89,9 @@ class EubinSSL(Eubin):
 
         return context
 
+#--------------------
+# Maildir(5)
+#--------------------
 class Maildir:
     def __init__(self, basedir):
         self.basedir = basedir
@@ -118,8 +132,9 @@ class Maildir:
         os.link(tmpfile, newfile)
         signal.alarm(0)
 
-#
+#--------------------
 # Main
+#--------------------
 def get_configs(confdir, suffix):
     import configparser
 
@@ -162,12 +177,9 @@ def main():
         if key == '-v':
             debug_level -= 10
 
-    logging.basicConfig(format='%(asctime)s\t%(message)s', level=debug_level)
+    logging.basicConfig(format=LOG_FORMAT, level=debug_level)
 
-    confdir = os.path.expanduser('~/.eubin')
-    suffix = '.conf'
-
-    for config in get_configs(confdir, suffix):
+    for config in get_configs(CONF_DIR, CONF_SUFFIX):
         server, account, retrieval, security = \
             (config[key] for key in ('server', 'account', 'retrieval', 'security'))
 
