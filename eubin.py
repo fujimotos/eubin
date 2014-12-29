@@ -44,6 +44,9 @@ class Eubin:
             if not leavecopy:
                 self.pop3.dele(idx+1)
 
+        _log.info('Clean up temporary files.')
+        maildir.clean()
+
         return (count, size)
 
     def quit(self):
@@ -134,6 +137,26 @@ class Maildir:
         os.link(tmpfile, newfile)
         os.remove(tmpfile)
         signal.alarm(0)
+
+    def clean(self):
+        """Remove old files in the tmp subdirectory."""
+        now = time.time()
+
+        os.chdir(self.basedir)
+
+        for filename in os.listdir('tmp/'):
+            path = os.path.join('tmp/', filename)
+
+            if not os.path.isfile(path):
+                continue
+
+            atime = os.path.getatime(path)
+            if  (now - atime) > 129600:  # Not accessed in 36 hours
+                _log.debug("* Removing '%s' (timestamp: %s)", path, time.ctime(atime))
+                os.remove(path)
+
+
+        _log.debug('path removed')
 
 #--------------------
 # Main
