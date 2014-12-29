@@ -99,12 +99,14 @@ class Maildir:
         self.hostname = socket.gethostname()
 
     def get_uniqueid(self):
+        """Create a unique name for a new message"""
         epoch, microsec = str(time.time()).split('.')
         urandom = ''.join('{:02x}'.format(x) for x in os.urandom(5))
 
         return '{}.M{}R{}.{}'.format(epoch, microsec, urandom, self.hostname)
 
     def deliver(self, lines):
+        """Write a message safely to the new subdirectory."""
         os.chdir(self.basedir)
 
         for retry in range(10):
