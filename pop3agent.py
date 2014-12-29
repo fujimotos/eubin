@@ -9,7 +9,7 @@ import signal
 import logging
 _log = logging.getLogger(__name__)
 
-class POP3Agent:
+class Eubin:
     def __init__(self, host, port):
         self.pop3 = poplib.POP3(host, port)
 
@@ -38,7 +38,7 @@ class POP3Agent:
     def quit(self):
         self.pop3.quit()
 
-class POP3AgentSSL(POP3Agent):
+class EubinSSL(Eubin):
     def __init__(self, host, port):
         context = self.get_ssl_context()
         self.pop3 = poplib.POP3_SSL(host, port, context=context)
@@ -164,7 +164,7 @@ def main():
 
     logging.basicConfig(format='%(asctime)s\t%(message)s', level=debug_level)
 
-    confdir = os.path.expanduser('~/.pop3agent')
+    confdir = os.path.expanduser('~/.eubin')
     suffix = '.conf'
 
     for config in get_configs(confdir, suffix):
@@ -178,9 +178,9 @@ def main():
         _log.info('Connect to %s:%s [SSL=%s].', host, port, overssl)
 
         if overssl:
-            agent = POP3AgentSSL(host, port)
+            eubin = EubinSSL(host, port)
         else:
-            agent = POP3Agent(host, port)
+            eubin = Eubin(host, port)
 
         # Authorization
         user = account['user']
@@ -188,18 +188,18 @@ def main():
         apop = security.getboolean('apop')
 
         _log.info("Login as '%s' [APOP=%s]", user, apop)
-        agent.login(user, password, apop=apop)
+        eubin.login(user, password, apop=apop)
 
         # Do some transaction
         dest = os.path.expanduser(retrieval['dest'])
         leavecopy = retrieval.getboolean('leavecopy')
 
         _log.info('Start fetching mails to %s [leavecopy=%s]', dest, leavecopy)
-        stat = agent.fetchmail(dest, leavecopy=leavecopy)
+        stat = eubin.fetchmail(dest, leavecopy=leavecopy)
 
         # Enter the update state.
         _log.info("Delivered: %s mails (%s bytes)", *stat)
-        agent.quit()
+        eubin.quit()
 
 if __name__ == '__main__':
     main()

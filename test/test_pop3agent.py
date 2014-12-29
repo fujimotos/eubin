@@ -4,9 +4,9 @@ import shutil
 import os
 from threading import Thread
 from mockserver import POP3Server
-from pop3agent import POP3Agent, Maildir
+from eubin import Eubin, Maildir
 
-class TestPOP3Agent(unittest.TestCase):
+class TestEubin(unittest.TestCase):
     def setUp(self):
         # Mocking POP3 server
         self.server = POP3Server()
@@ -32,9 +32,9 @@ class TestPOP3Agent(unittest.TestCase):
         shutil.rmtree(self.mailbox)
 
     def test_login(self):
-        agent = POP3Agent(self.host, self.port)
-        agent.login('user', 'password')
-        agent.quit()
+        eubin = Eubin(self.host, self.port)
+        eubin.login('user', 'password')
+        eubin.quit()
 
         recvlog = self.server.get_logiter()
 
@@ -43,9 +43,9 @@ class TestPOP3Agent(unittest.TestCase):
         self.assertEqual(next(recvlog), b'QUIT\r\n')
 
     def test_login_apop(self):
-        agent = POP3Agent(self.host, self.port)
-        agent.login('user', 'password', apop=True)
-        agent.quit()
+        eubin = Eubin(self.host, self.port)
+        eubin.login('user', 'password', apop=True)
+        eubin.quit()
 
         recvlog = self.server.get_logiter()
         
@@ -53,10 +53,10 @@ class TestPOP3Agent(unittest.TestCase):
         self.assertEqual(next(recvlog), b'QUIT\r\n')
 
     def test_fetchmail(self):
-        agent = POP3Agent(self.host, self.port)
-        agent.login('user', 'password')
-        agent.fetchmail(self.mailbox)
-        agent.quit()
+        eubin = Eubin(self.host, self.port)
+        eubin.login('user', 'password')
+        eubin.fetchmail(self.mailbox)
+        eubin.quit()
 
         recvlog = self.server.get_logiter()
 
@@ -68,10 +68,10 @@ class TestPOP3Agent(unittest.TestCase):
         self.assertEqual(next(recvlog), b'QUIT\r\n')
 
     def test_fetchmail_nocopy(self):
-        agent = POP3Agent(self.host, self.port)
-        agent.login('user', 'password')
-        agent.fetchmail(self.mailbox, leavecopy=False)
-        agent.quit()
+        eubin = Eubin(self.host, self.port)
+        eubin.login('user', 'password')
+        eubin.fetchmail(self.mailbox, leavecopy=False)
+        eubin.quit()
 
         recvlog = self.server.get_logiter()
 
@@ -85,10 +85,10 @@ class TestPOP3Agent(unittest.TestCase):
         self.assertEqual(next(recvlog), b'QUIT\r\n')
 
     def test_fetchmail_contents(self):
-        agent = POP3Agent(self.host, self.port)
-        agent.login('user', 'password')
-        agent.fetchmail(self.mailbox)
-        agent.quit()
+        eubin = Eubin(self.host, self.port)
+        eubin.login('user', 'password')
+        eubin.fetchmail(self.mailbox)
+        eubin.quit()
 
         # Enter into 'new' directory of the mailbox.
         os.chdir(os.path.join(self.mailbox, 'new'))
