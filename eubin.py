@@ -132,6 +132,7 @@ class Maildir:
                 fw.write(line + b'\n')
 
         os.link(tmpfile, newfile)
+        os.remove(tmpfile)
         signal.alarm(0)
 
 #--------------------
