@@ -2,7 +2,7 @@
 
 import poplib
 import ssl
-import maildir
+from eubin import maildir
 
 class Client:
     def __init__(self, host, port):
