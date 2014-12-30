@@ -1,24 +1,24 @@
 #!/usr/bin/env python
 
 import os
-import socket
 import time
+import glob
+from signal import alarm
+from socket import gethostname
+from binascii import hexlify
 
-def get_uniqueid():
-    pid = os.getpid()
-    hostname = socket.gethostname()
-    epoch, microsec = str(time.time()).split('.')
-    urandom = ''.join('{:02x}'.format(x) for x in os.urandom(5))
-    return '{}.M{}R{}.{}'.format(epoch, microsec, urandom, self.hostname)
+def getuid():
+    now = str(time.time()).split('.')
+    urandom = hexlify(os.urandom(5))
+    return '{}.M{}R{}P{}.{}'.format(now[0], now[1], urandom, os.getpid(), gethostname())
 
-def deliver(lines, maildir):
+def deliver(maildir, lines):
     os.chdir(maildir)
 
     for retry in range(10):
-        uid = self.get_uniqueid()
-        tmpfile, newfile = os.path.join('tmp', uid), os.path.join('new',  uid)
+        uid = getuid()
         try:
-            os.stat(tmpfile)
+            os.stat('tmp/' + uid)
         except FileNotFoundError:
             break
         except:
@@ -27,7 +27,8 @@ def deliver(lines, maildir):
     else:
         raise OSError('cannot safely create a file on tmp/')
 
-    signal.alarm(86400) # 24-hour timer.
+    tmpfile, newfile = 'tmp/' + uid, 'new/' + uid
+    alarm(86400)  # 24-hour timer.
 
     with open(tmpfile, 'wb') as fw:
         for line in lines:
@@ -35,20 +36,15 @@ def deliver(lines, maildir):
 
     os.link(tmpfile, newfile)
     os.remove(tmpfile)
-    signal.alarm(0)
+    alarm(0)  # Reset timer
 
-
-def clean(self, maildir):
-    now = time.time()
-
+def cleanup(maildir):
     os.chdir(maildir)
 
-    for filename in os.listdir('tmp/'):
-        path = os.path.join('tmp/', filename)
-
-        if not os.path.isfile(path):
+    for path in glob.iglob('tmp/*'):
+        if os.path.isfile(path):
             continue
 
         atime = os.path.getatime(path)
-        if  (now - atime) > 129600:  # Not accessed in 36 hours
+        if (time.time() - atime) > 129600:  # Not accessed in 36 hours
             os.remove(path)
