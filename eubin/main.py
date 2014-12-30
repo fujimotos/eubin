@@ -3,7 +3,7 @@ import sys
 import os
 import logging
 _log = logging.getLogger(__name__)
-from eubin import pop3
+from . import pop3
 
 def get_config():
     import configparser

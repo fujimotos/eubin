@@ -3,7 +3,7 @@
 import poplib
 import ssl
 import logging
-from eubin import maildir
+from . import maildir
 
 _log = logging.getLogger(__name__)
 
