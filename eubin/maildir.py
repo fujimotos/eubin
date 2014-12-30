@@ -7,7 +7,7 @@ from signal import alarm
 from socket import gethostname
 from binascii import hexlify
 
-def getuid():
+def _getuid():
     now = str(time.time()).split('.')
     urandom = hexlify(os.urandom(5))
     return '{}.M{}R{}P{}.{}'.format(now[0], now[1], urandom, os.getpid(), gethostname())
@@ -16,7 +16,7 @@ def deliver(maildir, lines):
     os.chdir(maildir)
 
     for retry in range(10):
-        uid = getuid()
+        uid = _getuid()
         try:
             os.stat('tmp/' + uid)
         except FileNotFoundError:
