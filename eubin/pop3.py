@@ -20,12 +20,12 @@ class Client:
 
         for idx in range(count):
             msg, lines, octet = self.pop3.retr(idx+1)
-            maildir.deliver(lines, destdir)
+            maildir.deliver(destdir, lines)
 
             if not leavecopy:
                 self.pop3.dele(idx+1)
 
-        maildir.clean()
+        maildir.cleanup(destdir)
 
         return (count, size)
 
@@ -33,7 +33,7 @@ class Client:
         self.pop3.quit()
 
 
-class ClientSSL(Eubin):
+class ClientSSL(Client):
     def __init__(self, host, port):
         context = self.get_ssl_context()
         self.pop3 = poplib.POP3_SSL(host, port, context=context)
