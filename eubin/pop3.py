@@ -2,7 +2,10 @@
 
 import poplib
 import ssl
+import logging
 from eubin import maildir
+
+_log = logging.getLogger(__name__)
 
 class Client:
     def __init__(self, host, port):
@@ -37,6 +40,11 @@ class ClientSSL(Client):
     def __init__(self, host, port):
         context = self.get_ssl_context()
         self.pop3 = poplib.POP3_SSL(host, port, context=context)
+
+        _log.debug('OpenSSL info:')
+        _log.debug('- OpenSSL version: %s', ssl.OPENSSL_VERSION)
+        _log.debug('- cipher: %s', self.pop3.sock.cipher())
+        _log.debug('- Compression: %s', self.pop3.sock.compression())
 
     @staticmethod
     def get_ssl_context():

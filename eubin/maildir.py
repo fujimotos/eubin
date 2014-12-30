@@ -3,9 +3,12 @@
 import os
 import time
 import glob
+import logging
 from signal import alarm
 from socket import gethostname
 from binascii import hexlify
+
+_log = logging.getLogger(__name__)
 
 def _getuid():
     now = str(time.time()).split('.')
@@ -27,6 +30,8 @@ def deliver(maildir, lines):
     else:
         raise OSError('cannot safely create a file on tmp/')
 
+    _log.debug('newfile: %s', uid)
+
     tmpfile, newfile = 'tmp/' + uid, 'new/' + uid
     alarm(86400)  # 24-hour timer.
 
@@ -47,4 +52,5 @@ def cleanup(maildir):
 
         atime = os.path.getatime(path)
         if (time.time() - atime) > 129600:  # Not accessed in 36 hours
+            _log.debug('removing %s', path)
             os.remove(path)
