@@ -42,7 +42,7 @@ def cleanup(maildir):
     os.chdir(maildir)
 
     for path in glob.iglob('tmp/*'):
-        if os.path.isfile(path):
+        if not os.path.isfile(path):
             continue
 
         atime = os.path.getatime(path)
