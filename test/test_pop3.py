@@ -3,10 +3,10 @@ import tempfile
 import shutil
 import os
 from threading import Thread
+from eubin import pop3
 from mockserver import POP3Server
-from eubin import Eubin, Maildir
 
-class TestEubin(unittest.TestCase):
+class TestPOP3(unittest.TestCase):
     def setUp(self):
         # Mocking POP3 server
         self.server = POP3Server()
@@ -32,9 +32,9 @@ class TestEubin(unittest.TestCase):
         shutil.rmtree(self.mailbox)
 
     def test_login(self):
-        eubin = Eubin(self.host, self.port)
-        eubin.login('user', 'password')
-        eubin.quit()
+        client = pop3.Client(self.host, self.port)
+        client.login('user', 'password')
+        client.quit()
 
         recvlog = self.server.get_logiter()
 
@@ -43,9 +43,9 @@ class TestEubin(unittest.TestCase):
         self.assertEqual(next(recvlog), b'QUIT\r\n')
 
     def test_login_apop(self):
-        eubin = Eubin(self.host, self.port)
-        eubin.login('user', 'password', apop=True)
-        eubin.quit()
+        client = pop3.Client(self.host, self.port)
+        client.login('user', 'password', apop=True)
+        client.quit()
 
         recvlog = self.server.get_logiter()
         
@@ -53,10 +53,10 @@ class TestEubin(unittest.TestCase):
         self.assertEqual(next(recvlog), b'QUIT\r\n')
 
     def test_fetchmail(self):
-        eubin = Eubin(self.host, self.port)
-        eubin.login('user', 'password')
-        eubin.fetchmail(self.mailbox)
-        eubin.quit()
+        client = pop3.Client(self.host, self.port)
+        client.login('user', 'password')
+        client.fetchmail(self.mailbox)
+        client.quit()
 
         recvlog = self.server.get_logiter()
 
@@ -68,10 +68,10 @@ class TestEubin(unittest.TestCase):
         self.assertEqual(next(recvlog), b'QUIT\r\n')
 
     def test_fetchmail_nocopy(self):
-        eubin = Eubin(self.host, self.port)
-        eubin.login('user', 'password')
-        eubin.fetchmail(self.mailbox, leavecopy=False)
-        eubin.quit()
+        client = pop3.Client(self.host, self.port)
+        client.login('user', 'password')
+        client.fetchmail(self.mailbox, leavecopy=False)
+        client.quit()
 
         recvlog = self.server.get_logiter()
 
@@ -85,10 +85,10 @@ class TestEubin(unittest.TestCase):
         self.assertEqual(next(recvlog), b'QUIT\r\n')
 
     def test_fetchmail_contents(self):
-        eubin = Eubin(self.host, self.port)
-        eubin.login('user', 'password')
-        eubin.fetchmail(self.mailbox)
-        eubin.quit()
+        client = pop3.Client(self.host, self.port)
+        client.login('user', 'password')
+        client.fetchmail(self.mailbox)
+        client.quit()
 
         # Enter into 'new' directory of the mailbox.
         os.chdir(os.path.join(self.mailbox, 'new'))
@@ -101,12 +101,6 @@ class TestEubin(unittest.TestCase):
         for mail in mails:
             with open(mail, 'rb') as fp:
                 self.assertEqual(fp.read(), b'<mail-text>\n')
-
-
-class TestMaildir(unittest.TestCase):
-    def test_get_uniqueid(self):
-        m = Maildir('/tmp/')
-        self.assertNotEqual(m.get_uniqueid(), m.get_uniqueid())
 
 if __name__ == '__main__':
     unittest.main()
