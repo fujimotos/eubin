@@ -4,7 +4,7 @@ import poplib
 import ssl
 import maildir
 
-class Agent:
+class Client:
     def __init__(self, host, port):
         self.pop3 = poplib.POP3(host, port)
 
@@ -33,7 +33,7 @@ class Agent:
         self.pop3.quit()
 
 
-class AgentSSL(Eubin):
+class ClientSSL(Eubin):
     def __init__(self, host, port):
         context = self.get_ssl_context()
         self.pop3 = poplib.POP3_SSL(host, port, context=context)
