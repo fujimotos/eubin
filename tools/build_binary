@@ -15,6 +15,7 @@ if __name__ == "__main__":
 # chdir
 filedir = os.path.dirname(__file__)
 os.chdir(os.path.join(filedir, '..'))
+os.makedirs('bin', exist_ok=True)
 
 # Bundling modules
 with ZipFile(ZIPFILE, mode='w') as zipfile:
@@ -32,4 +33,4 @@ with open(BINFILE, 'wb') as fw:
 os.chmod(BINFILE, 0o755)
 os.remove(ZIPFILE)
 
-print('Executable:', BINFILE)
+print('Build:', BINFILE)
