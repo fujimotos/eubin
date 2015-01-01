@@ -3,7 +3,8 @@ from eubin import maildir
 
 class TestMaildir(unittest.TestCase):
     def test_getuid(self):
-        self.assertNotEqual(maildir._getuid(), maildir._getuid())
+        uid1, uid2 = (maildir._getuid() for x in range(2))
+        self.assertNotEqual(uid1, uid2)
 
 if __name__ == '__main__':
     unittest.main()
