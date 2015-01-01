@@ -6,11 +6,11 @@ import glob
 
 ZIPFILE = 'bin/eubin.zip'
 BINFILE = 'bin/eubin'
-MAIN_SCRIPT = b'''\
-from eubin import main
+MAIN_SCRIPT = b"""\
+import runpy
 if __name__ == "__main__":
-    main.main()
-'''
+    runpy.run_module('eubin.main', run_name='__main__')
+"""
 
 # chdir
 filedir = os.path.dirname(__file__)
