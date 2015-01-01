@@ -2,9 +2,10 @@ import getopt
 import sys
 import os
 import logging
-_log = logging.getLogger(__name__)
-from . import pop3
+from .pop3 import Client, ClientSSL
 from .pidlock import PIDLock
+
+_log = logging.getLogger(__name__)
 
 def get_config():
     import configparser
@@ -52,9 +53,9 @@ def main():
         overssl = security.getboolean('overssl')
 
         if overssl:
-            client = pop3.ClientSSL(host, port)
+            client = ClientSSL(host, port)
         else:
-            client = pop3.Client(host, port)
+            client = Client(host, port)
 
         # Authorization
         user = account['user']
