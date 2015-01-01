@@ -4,6 +4,7 @@ import os
 import logging
 _log = logging.getLogger(__name__)
 from . import pop3
+from .pidlock import PIDLock
 
 def get_config():
     import configparser
@@ -74,4 +75,6 @@ def main():
         client.quit()
 
 if __name__ == '__main__':
-    main()
+    os.chdir(os.path.expanduser('~/.eubin'))
+    with PIDLock('lockfile').acquire():
+        main()
