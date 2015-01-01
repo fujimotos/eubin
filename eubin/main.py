@@ -9,13 +9,17 @@ from .pidlock import PIDLock
 
 _log = logging.getLogger(__name__)
 
+# init
+BASEDIR = os.path.expanduser('~/.eubin')
+LOCKFILE = os.path.join(BASEDIR, 'lockfile')
+
+# utils
 def get_config():
     import configparser
     import glob
 
-    os.chdir(os.path.expanduser('~/.eubin'))
-
-    for filename in glob.iglob('*.conf'):
+    pat = os.path.join(BASEDIR, '*.conf')
+    for filename in glob.iglob(pat):
         config = configparser.ConfigParser()
         config.read(filename)
         yield (filename, config)
@@ -78,6 +82,5 @@ def main():
         client.quit()
 
 if __name__ == '__main__':
-    os.chdir(os.path.expanduser('~/.eubin'))
-    with PIDLock('lockfile').acquire():
+    with PIDLock(LOCKFILE).acquire():
         main()
