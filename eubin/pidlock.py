@@ -42,8 +42,8 @@ class PIDLock:
         isalive = self._isalive(pid)
 
         if not isalive:
-            _log.warning('Lock file found, but no process running as pid %s', pid)
-            _log.warning('Clean up the old lock file')
+            _log.warning('Lock file found, but no process running as pid %s.', pid)
+            _log.warning('Clean up the old lock file...')
             self.release()
 
         return isalive

@@ -30,10 +30,10 @@ def deliver(maildir, lines):
     else:
         raise OSError('cannot safely create a file on tmp/')
 
-    _log.debug('newfile: %s', uid)
-
     tmpfile, newfile = 'tmp/' + uid, 'new/' + uid
     alarm(86400)  # 24-hour timer.
+
+    _log.debug("* New file: '%s'", newfile)
 
     with open(tmpfile, 'wb') as fw:
         for line in lines:
@@ -52,5 +52,5 @@ def cleanup(maildir):
 
         atime = os.path.getatime(path)
         if (time.time() - atime) > 129600:  # Not accessed in 36 hours
-            _log.debug('removing %s', path)
+            _log.debug("* Clean up: '%s'", path)
             os.remove(path)
