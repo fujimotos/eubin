@@ -1,4 +1,4 @@
-pop3agent
-=========
+Eubin
+=====
 
-A simple POP3 retriever
+Yet another POP3 client.
