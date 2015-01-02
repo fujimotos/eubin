@@ -50,20 +50,18 @@ def main():
         elif key == '--quiet':
             debug_level += 10
 
-    logging.basicConfig(level=debug_level, format='%(message)s')
+    logging.basicConfig(level=debug_level, format='eubin[{levelname}]: {message}', style='{')
 
     # Main
     for config in get_config():
         server, account, retrieval, security = \
             (config[key] for key in ('server', 'account', 'retrieval', 'security'))
 
-        _log.info('(%s)', config._id)
-
         # Initiate the connection
         host, port = server['host'], server['port']
         overssl = security.getboolean('overssl')
 
-        _log.info("Connect to '%s:%s'. [SSL=%s]", host, port, overssl)
+        _log.info("Connect to %s:%s [SSL=%s]", host, port, overssl)
 
         if overssl:
             client = ClientSSL(host, port)
@@ -75,7 +73,7 @@ def main():
         password = get_password(account['pass'], account['passtype'])
         apop = security.getboolean('apop')
 
-        _log.info("Login as '%s'. [APOP=%s]", user, apop)
+        _log.debug('Login as %s [APOP=%s]', user, apop)
 
         client.login(user, password, apop=apop)
 
@@ -83,11 +81,11 @@ def main():
         dest = os.path.expanduser(retrieval['dest'])
         leavecopy = retrieval.getboolean('leavecopy')
 
-        _log.info("Start retlieving mails to '%s'. [leavecopy=%s]", dest, leavecopy)
+        _log.debug('Retrieve mails to %s [leavecopy=%s]', dest, leavecopy)
 
         stat = client.fetchmail(dest, leavecopy=leavecopy)
 
-        _log.info('%s mails retrieved (%s bytes).', *stat)
+        _log.info('%s mails retrieved (%s bytes)', *stat)
 
         # Enter the update state.
         client.quit()
