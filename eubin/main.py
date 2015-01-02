@@ -43,10 +43,12 @@ def get_password(token, passtype):
 def main():
     debug_level = logging.INFO
 
-    opts, args = getopt.getopt(sys.argv[1:], 'v')
+    opts, args = getopt.getopt(sys.argv[1:], 'v', ('quiet', ))
     for key, val in opts:
         if key == '-v':
             debug_level -= 10
+        elif key == '--quiet':
+            debug_level += 10
 
     logging.basicConfig(level=debug_level, format='%(message)s')
 
