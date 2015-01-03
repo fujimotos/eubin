@@ -4,7 +4,7 @@ import getopt
 import sys
 import os
 import logging
-from .pop3 import Client, ClientSSL
+from . import pop3
 from .pidlock import PIDLock
 
 _log = logging.getLogger(__name__)
@@ -63,10 +63,7 @@ def main():
 
         _log.info("Connect to %s:%s [SSL=%s]", host, port, overssl)
 
-        if overssl:
-            client = ClientSSL(host, port)
-        else:
-            client = Client(host, port)
+        client = pop3.connect(host, port, ssl=overssl)
 
         # Authorization
         user = account['user']

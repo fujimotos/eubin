@@ -71,3 +71,14 @@ class ClientSSL(Client):
         context.set_default_verify_paths()
 
         return context
+
+# An interface function for Client/ClientSSL.
+# Use this function as follows:
+# >>> from eubin import pop3
+# >>> client = pop3.connect('example.com', 111)
+def connect(host, port, ssl=False):
+    if ssl:
+        client = ClientSSL(host, port)
+    else:
+        client = Client(host, port)
+    return client
