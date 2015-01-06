@@ -18,15 +18,13 @@ class Client:
             self.pop3.user(user)
             self.pop3.pass_(password)
 
-    def fetchmail(self, destdir, leavecopy=True):
+    def fetchmail(self, destdir):
         count, size = self.pop3.stat()
 
         for idx in range(count):
             msg, lines, octet = self.pop3.retr(idx+1)
             maildir.deliver(destdir, lines)
-
-            if not leavecopy:
-                self.pop3.dele(idx+1)
+            self.pop3.dele(idx+1)
 
         maildir.cleanup(destdir)
 
