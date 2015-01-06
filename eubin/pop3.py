@@ -30,6 +30,13 @@ class Client:
 
         return (count, size)
 
+    def hashiter(self):
+        count, size = self.pop3.stat()
+        for idx in range(count):
+            header = self.pop3.top(idx, 0)
+            md5sum = hashlog.md5sum(header)
+            yield (idx, md5sum)
+
     def quit(self):
         self.pop3.quit()
 
