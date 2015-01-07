@@ -17,7 +17,9 @@ def append(logpath, hashstr):
 
 def create(logpath, hashlist):
     tmpfile = logpath + '.tmp'
-    update(tmpfile, hashlist)
+    with open(tmpfile, 'w') as fp:
+        for h in hashlist:
+            fp.write(h + '\n')
     os.rename(tmpfile, logpath)
 
 def md5sum(lines):
