@@ -27,8 +27,9 @@ class TestHashlog(unittest.TestCase):
         hashset = hashlog.load(self.logpath)
         self.assertEqual(hashset, {MD5SUM['a'], MD5SUM['b']})
 
-    def test_update(self):
-        hashlog.update(self.logpath, (MD5SUM['c'], MD5SUM['d']))
+    def test_append(self):
+        hashlog.append(self.logpath, MD5SUM['c'])
+        hashlog.append(self.logpath, MD5SUM['d'])
         with open(self.logpath) as fp:
             self.assertEqual(fp.readline(), MD5SUM['a'] + '\n')
             self.assertEqual(fp.readline(), MD5SUM['b'] + '\n')
