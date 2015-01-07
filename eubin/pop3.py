@@ -30,12 +30,23 @@ class Client:
 
         return (count, size)
 
-    def hashiter(self):
+    def fetchmail_copy(self, destdir, logpath):
         count, size = self.pop3.stat()
+        hashpool = hashlog.load(logfile)
+
+        newmail = []
         for idx in range(count):
             header = self.pop3.top(idx, 0)
             md5sum = hashlog.md5sum(header)
-            yield (idx, md5sum)
+
+            if md5sum in hashpool:
+                msg, lines, octet = self.pop3.retr(idx+1)
+                maildir.deliver(destdir, lines)
+
+                hashlog.append(logpath, md5sum)
+                newmail.append(octet)
+
+        return len(newmail), sum(newmail)
 
     def quit(self):
         self.pop3.quit()
