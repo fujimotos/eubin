@@ -4,8 +4,11 @@ import hashlib
 import os
 
 def load(logpath):
-    with open(logpath, 'r') as fp:
-        res = set(line.strip() for line in fp)
+    if os.path.exists(logpath):
+        with open(logpath) as fp:
+            res = set(line.strip() for line in fp)
+    else:
+        res = set()
     return res
     
 def update(logpath, hashlist):
