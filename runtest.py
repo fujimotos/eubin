@@ -9,7 +9,7 @@ import os
 TEST_DIR = os.path.join(os.path.dirname(__file__), 'test')
 
 def main():
-    opts, args = getopt.getopt(sys.argv[1:], 'v:p:')
+    opts, args = getopt.getopt(sys.argv[1:], 'vp:')
     verbosity = 1
     pattern = 'test*.py'
 
