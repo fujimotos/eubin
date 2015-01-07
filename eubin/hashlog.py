@@ -11,10 +11,9 @@ def load(logpath):
         res = set()
     return res
     
-def update(logpath, hashlist):
+def append(logpath, hashstr):
     with open(logpath, 'a') as fp:
-        for h in hashlist:
-            fp.write(h + '\n')
+        fp.write(hashstr + '\n')
 
 def create(logpath, hashlist):
     tmpfile = logpath + '.tmp'
