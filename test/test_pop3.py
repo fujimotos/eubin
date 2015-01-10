@@ -78,6 +78,7 @@ class TestPOP3(unittest.TestCase):
         client = pop3.Client(self.host, self.port)
         client.login('user', 'password')
         client.fetchmail_copy(self.mailbox, logpath=self.hashlog.name)
+        client.fetchmail_copy(self.mailbox, logpath=self.hashlog.name) # Retry
         client.quit()
 
         recvlog = self.server.get_logiter()
@@ -89,22 +90,6 @@ class TestPOP3(unittest.TestCase):
         self.assertEqual(next(recvlog), b'RETR 1\r\n')
         self.assertEqual(next(recvlog), b'TOP 2 0\r\n')
         self.assertEqual(next(recvlog), b'RETR 2\r\n')
-        self.assertEqual(next(recvlog), b'QUIT\r\n')
-
-    def test_fetchmail_copy_retlieved(self):
-        with open(self.hashlog.name, 'w') as fp:
-            # md5sum '<header>'
-            fp.write('cea964ac6a233b51fe5a28f7f4a40895\n')
-
-        client = pop3.Client(self.host, self.port)
-        client.login('user', 'password')
-        client.fetchmail_copy(self.mailbox, logpath=self.hashlog.name)
-        client.quit()
-
-        recvlog = self.server.get_logiter()
-
-        self.assertEqual(next(recvlog), b'USER user\r\n')
-        self.assertEqual(next(recvlog), b'PASS password\r\n')
         self.assertEqual(next(recvlog), b'STAT\r\n')
         self.assertEqual(next(recvlog), b'TOP 1 0\r\n')
         self.assertEqual(next(recvlog), b'TOP 2 0\r\n')
