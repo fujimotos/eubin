@@ -12,6 +12,7 @@ _log = logging.getLogger(__name__)
 # init
 BASEDIR = os.path.expanduser('~/.eubin')
 LOCKFILE = os.path.join(BASEDIR, 'lockfile')
+MAILLOG = os.path.join(BASEDIR, 'maillog')
 
 # utils
 def get_config():
@@ -80,7 +81,10 @@ def main():
 
         _log.debug('Retrieve mails to %s [leavecopy=%s]', dest, leavecopy)
 
-        stat = client.fetchmail(dest, leavecopy=leavecopy)
+        if leavecopy:
+            stat = client.fetchmail_copy(dest, logpath=MAILLOG)
+        else:
+            stat = client.fetchmail(dest)
 
         _log.info('%s mails retrieved (%s bytes)', *stat)
 

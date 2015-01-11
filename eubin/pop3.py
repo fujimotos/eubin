@@ -33,14 +33,14 @@ class Client:
 
     def fetchmail_copy(self, destdir, logpath):
         count, size = self.pop3.stat()
-        hashpool = hashlog.load(logpath)
+        maillog = hashlog.load(logpath)
 
         newmail = []
         for idx in range(count):
             header = self.pop3.top(idx+1, 0)[1]
             md5sum = hashlog.md5sum(header)
 
-            if md5sum not in hashpool:
+            if md5sum not in maillog:
                 msg, lines, octet = self.pop3.retr(idx+1)
                 maildir.deliver(destdir, lines)
 
