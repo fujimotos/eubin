@@ -21,9 +21,14 @@ class Client:
             'quit': None
         }
 
-    def _trace_mail(self, size, md5sum=None):
+    def _trace_mail(self, size, filename, md5sum=None):
         now = time.time()
-        self._state['mail'].append((now, size, md5sum))
+        self._state['mail'].append({
+            'time': now,
+            'size': size,
+            'filename': filename,
+            'md5sum':  md5sum
+        })
 
     def login(self, user, password, apop=False):
         if apop:
@@ -37,9 +42,9 @@ class Client:
 
         for idx in range(count):
             msg, lines, octet = self.pop3.retr(idx+1)
-            maildir.deliver(destdir, lines)
+            filename = maildir.deliver(destdir, lines)
             self.pop3.dele(idx+1)
-            self._trace_mail(octet)
+            self._trace_mail(octet, filename)
 
     def fetchmail_copy(self, destdir, logpath):
         count, size = self.pop3.stat()
@@ -52,9 +57,9 @@ class Client:
 
             if md5sum not in maillog:
                 msg, lines, octet = self.pop3.retr(idx+1)
-                maildir.deliver(destdir, lines)
+                filename = maildir.deliver(destdir, lines)
 
-                self._trace_mail(octet, md5sum)
+                self._trace_mail(octet, filename, md5sum)
                 hashlog.append(logpath, md5sum)
 
     def quit(self):

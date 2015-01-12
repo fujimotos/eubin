@@ -42,6 +42,7 @@ def deliver(maildir, lines):
     os.link(tmpfile, newfile)
     os.remove(tmpfile)
     alarm(0)  # Reset timer
+    return uid
 
 def cleanup(maildir):
     os.chdir(maildir)
