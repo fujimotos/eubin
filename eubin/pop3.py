@@ -3,6 +3,7 @@
 import poplib
 import ssl
 import logging
+import time
 from . import maildir
 from . import hashlog
 
@@ -10,7 +11,19 @@ _log = logging.getLogger(__name__)
 
 class Client:
     def __init__(self, host, port):
+        self._init_state()
         self.pop3 = poplib.POP3(host, port)
+
+    def _init_state(self):
+        self._state = {
+            'init': time.time(),
+            'mail': [],  # list of retlieved mails
+            'quit': None
+        }
+
+    def _trace_mail(self, size, md5sum=None):
+        now = time.time()
+        self._state['mail'].append((now, size, md5sum))
 
     def login(self, user, password, apop=False):
         if apop:
@@ -26,10 +39,7 @@ class Client:
             msg, lines, octet = self.pop3.retr(idx+1)
             maildir.deliver(destdir, lines)
             self.pop3.dele(idx+1)
-
-        maildir.cleanup(destdir)
-
-        return (count, size)
+            self._trace_mail(octet)
 
     def fetchmail_copy(self, destdir, logpath):
         count, size = self.pop3.stat()
@@ -44,22 +54,28 @@ class Client:
                 msg, lines, octet = self.pop3.retr(idx+1)
                 maildir.deliver(destdir, lines)
 
+                self._trace_mail(octet, md5sum)
                 hashlog.append(logpath, md5sum)
-                newmail.append(octet)
-
-        return len(newmail), sum(newmail)
 
     def quit(self):
+        from pprint import pformat
         self.pop3.quit()
+
+        self._state['quit'] = time.time()
+        logging.debug('execlog = %s', pformat(self._state))
 
 
 class ClientSSL(Client):
     def __init__(self, host, port):
+        self._init_state()
+
         context = self.get_ssl_context()
         self.pop3 = poplib.POP3_SSL(host, port, context=context)
 
-        _log.debug("* LibSSL: '%s'", ssl.OPENSSL_VERSION)
-        _log.debug("* Cipher: %s", self.pop3.sock.cipher())
+        self._state['ssl'] = {
+            'version': ssl.OPENSSL_VERSION,
+            'cipher': self.pop3.sock.cipher()
+        }
 
     @staticmethod
     def get_ssl_context():
