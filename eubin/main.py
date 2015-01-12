@@ -78,6 +78,7 @@ def main():
         # Do some transaction
         dest = os.path.expanduser(retrieval['dest'])
         leavecopy = retrieval.getboolean('leavecopy')
+        leavemax = retrieval.getint('leavemax')
 
         _log.debug('Retrieve mails to %s [leavecopy=%s]', dest, leavecopy)
 
