@@ -82,11 +82,12 @@ def main():
         _log.debug('Retrieve mails to %s [leavecopy=%s]', dest, leavecopy)
 
         if leavecopy:
-            stat = client.fetchmail_copy(dest, logpath=MAILLOG)
+            client.fetchmail_copy(dest, logpath=MAILLOG)
         else:
-            stat = client.fetchmail(dest)
+            client.fetchmail(dest)
 
-        _log.info('%s mails retrieved (%s bytes)', *stat)
+        stat = tuple(m[1] for m in client._state['mail'])
+        _log.info('%s mails retrieved (%s bytes)', len(stat), sum(stat))
 
         # Enter the update state.
         client.quit()
