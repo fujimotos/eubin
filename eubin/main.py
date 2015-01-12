@@ -23,7 +23,7 @@ def get_config():
     for filename in glob.iglob(pat):
         config = configparser.ConfigParser()
         config.read(filename)
-        config._id = os.path.basename(filename)
+        config._id = os.path.basename(filename).rstrip('.conf')
         yield config
 
 def get_password(token, passtype):
@@ -82,7 +82,8 @@ def main():
         _log.debug('Retrieve mails to %s [leavecopy=%s]', dest, leavecopy)
 
         if leavecopy:
-            client.fetchmail_copy(dest, logpath=MAILLOG)
+            maillog = os.path.join(BASEDIR, '.{}.maillog'.format(config._id))
+            client.fetchmail_copy(dest, logpath=maillog)
         else:
             client.fetchmail(dest)
 

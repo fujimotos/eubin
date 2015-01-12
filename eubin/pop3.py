@@ -49,6 +49,7 @@ class Client:
     def fetchmail_copy(self, destdir, logpath):
         count, size = self.pop3.stat()
         maillog = hashlog.load(logpath)
+        self._state['maillog'] = logpath
 
         newmail = []
         for idx in range(count):
