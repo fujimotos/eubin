@@ -12,7 +12,6 @@ _log = logging.getLogger(__name__)
 # init
 BASEDIR = os.path.expanduser('~/.eubin')
 LOCKFILE = os.path.join(BASEDIR, 'lockfile')
-MAILLOG = os.path.join(BASEDIR, 'maillog')
 
 # utils
 def get_config():
