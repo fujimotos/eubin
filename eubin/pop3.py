@@ -51,7 +51,6 @@ class Client:
         maillog = hashlog.load(logpath)
         self._state['maillog'] = logpath
 
-        newmail = []
         for idx in range(count):
             header = self.pop3.top(idx+1, 0)[1]
             md5sum = hashlog.md5sum(header)
