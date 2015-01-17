@@ -46,7 +46,7 @@ class Client:
             self.pop3.dele(idx+1)
             self._trace_mail(octet, filename)
 
-    def fetchmail_copy(self, destdir, logpath):
+    def fetchmail_copy(self, destdir, logpath, leavemax=None):
         count, size = self.pop3.stat()
         maillog = hashlog.load(logpath)
         self._state['maillog'] = logpath
@@ -61,6 +61,9 @@ class Client:
 
                 self._trace_mail(octet, filename, md5sum)
                 hashlog.append(logpath, md5sum)
+
+            if leavemax and leavemax <= idx:
+                self.pop3.dele(idx+1)
 
     def quit(self):
         from pprint import pformat
