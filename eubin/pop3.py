@@ -63,6 +63,7 @@ class Client:
                 hashlog.append(logpath, md5sum)
 
             if leavemax and leavemax <= idx:
+                logging.debug("Removing '{}' from the maildrop".format(md5sum))
                 self.pop3.dele(idx+1)
 
     def quit(self):
