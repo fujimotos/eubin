@@ -37,4 +37,4 @@ def decode_ssl_options(options):
     }
 
     items = sorted(openssl_options.items())
-    return tuple(opt for bit, opt for items if bit & options)
+    return tuple(opt for bit, opt in items if bit & options)
