@@ -1,4 +1,5 @@
 def decode_ssl_options(options):
+    """Convert 'context.options' bits into human-readable list"""
     # This is the full list of ssl options defined in include/ssl.h
     # at openssl-1.0.1k.
     openssl_options = {
@@ -35,8 +36,5 @@ def decode_ssl_options(options):
         0x80000000: 'SSL_OP_CRYPTOPRO_TLSEXT_BUG'
     }
 
-    res = []
-    for key in sorted(openssl_options.keys()):
-        if key & options:
-            res.append(openssl_options[key])
-    return res
+    items = sorted(openssl_options.items())
+    return tuple(opt for bit, opt for items if bit & options)
