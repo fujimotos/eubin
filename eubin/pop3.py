@@ -12,20 +12,14 @@ _log = logging.getLogger(__name__)
 
 class Client:
     def __init__(self, host, port):
-        self._init_state()
         self.pop3 = poplib.POP3(host, port)
+        self._init_statelog()
 
-    def _init_state(self):
-        self._state = {
-            'init': time.time(),
-            'mail': [],  # list of retlieved mails
-            'quit': None
-        }
+    def _init_statelog(self):
+        self._statelog = {'mail': []}
 
     def _trace_mail(self, size, filename, md5sum=None):
-        now = time.time()
-        self._state['mail'].append({
-            'time': now,
+        self._statelog['mail'].append({
             'size': size,
             'filename': filename,
             'md5sum':  md5sum
@@ -50,7 +44,7 @@ class Client:
     def fetchmail_copy(self, destdir, logpath, leavemax=None):
         count, size = self.pop3.stat()
         maillog = hashlog.load(logpath)
-        self._state['maillog'] = logpath
+        self._statelog['maillog'] = logpath
 
         for idx in range(count):
             header = self.pop3.top(idx+1, 0)[1]
@@ -70,19 +64,16 @@ class Client:
     def quit(self):
         from pprint import pformat
         self.pop3.quit()
-
-        self._state['quit'] = time.time()
-        logging.debug('execlog = %s', pformat(self._state))
+        logging.debug('execlog = %s', pformat(self._statelog))
 
 
 class ClientSSL(Client):
     def __init__(self, host, port):
-        self._init_state()
-
         context = self.get_ssl_context()
         self.pop3 = poplib.POP3_SSL(host, port, context=context)
 
-        self._state['ssl'] = {
+        self._init_statelog()
+        self._statelog['ssl'] = {
             'version': ssl.OPENSSL_VERSION,
             'cipher': self.pop3.sock.cipher(),
             'option': util.decode_ssl_options(context.options)

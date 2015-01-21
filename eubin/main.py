@@ -87,7 +87,7 @@ def main():
         else:
             client.fetchmail(dest)
 
-        stat = tuple(m['size'] for m in client._state['mail'])
+        stat = tuple(m['size'] for m in client._statelog['mail'])
         _log.info('%s mails retrieved (%s bytes)', len(stat), sum(stat))
 
         # Enter the update state.
