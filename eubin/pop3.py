@@ -18,13 +18,6 @@ class Client:
     def _init_statelog(self):
         self._statelog = {'mail': []}
 
-    def _trace_mail(self, size, filename, md5sum=None):
-        self._statelog['mail'].append({
-            'size': size,
-            'filename': filename,
-            'md5sum':  md5sum
-        })
-
     def login(self, user, password, apop=False):
         if apop:
             self.pop3.apop(user, password)
@@ -39,7 +32,7 @@ class Client:
             msg, lines, octet = self.pop3.retr(idx+1)
             filename = maildir.deliver(destdir, lines)
             self.pop3.dele(idx+1)
-            self._trace_mail(octet, filename)
+            self._statelog['mail'].append({'msgnum': idx+1, 'size': octet, 'filename': filename})
 
     def fetchmail_copy(self, destdir, logpath, leavemax=None):
         count, size = self.pop3.stat()
@@ -49,22 +42,31 @@ class Client:
         for idx in range(count):
             header = self.pop3.top(idx+1, 0)[1]
             md5sum = hashlog.md5sum(header)
+            _mail = {'msgnum': idx+1, 'md5sum': md5sum}
 
             if md5sum not in maillog:
                 msg, lines, octet = self.pop3.retr(idx+1)
                 filename = maildir.deliver(destdir, lines)
 
-                self._trace_mail(octet, filename, md5sum)
+                _mail['size'] = octet
+                _mail['filename'] = filename
                 hashlog.append(logpath, md5sum)
+            else:
+                _mail['skip'] = True
 
             if leavemax and leavemax <= idx:
-                logging.debug("Removing '{}' from the maildrop".format(md5sum))
+                _mail['delete'] = True
                 self.pop3.dele(idx+1)
 
-    def quit(self):
+            self._statelog['mail'].append(_mail)
+
+    def debug(self):
         from pprint import pformat
+        _log.debug('execlog = %s', pformat(self._statelog))
+
+    def quit(self):
         self.pop3.quit()
-        logging.debug('execlog = %s', pformat(self._statelog))
+        self.debug()
 
 
 class ClientSSL(Client):
