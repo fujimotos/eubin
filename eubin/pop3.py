@@ -13,10 +13,6 @@ _log = logging.getLogger(__name__)
 class Client:
     def __init__(self, host, port):
         self.pop3 = poplib.POP3(host, port)
-        self._init_statelog()
-
-    def _init_statelog(self):
-        self._statelog = {'mail': []}
 
     def login(self, user, password, apop=False):
         if apop:
@@ -32,54 +28,31 @@ class Client:
             msg, lines, octet = self.pop3.retr(idx+1)
             filename = maildir.deliver(destdir, lines)
             self.pop3.dele(idx+1)
-            self._statelog['mail'].append({'msgnum': idx+1, 'size': octet, 'filename': filename})
 
     def fetchmail_copy(self, destdir, logpath, leavemax=None):
         count, size = self.pop3.stat()
         maillog = hashlog.load(logpath)
-        self._statelog['maillog'] = logpath
 
         for idx in range(count):
             header = self.pop3.top(idx+1, 0)[1]
             md5sum = hashlog.md5sum(header)
-            _mail = {'msgnum': idx+1, 'md5sum': md5sum}
 
             if md5sum not in maillog:
                 msg, lines, octet = self.pop3.retr(idx+1)
                 filename = maildir.deliver(destdir, lines)
-
-                _mail['size'] = octet
-                _mail['filename'] = filename
                 hashlog.append(logpath, md5sum)
-            else:
-                _mail['skip'] = True
 
             if leavemax and leavemax <= idx:
-                _mail['delete'] = True
                 self.pop3.dele(idx+1)
-
-            self._statelog['mail'].append(_mail)
-
-    def debug(self):
-        from pprint import pformat
-        _log.debug('execlog = %s', pformat(self._statelog))
 
     def quit(self):
         self.pop3.quit()
-        self.debug()
 
 
 class ClientSSL(Client):
     def __init__(self, host, port):
         context = self.get_ssl_context()
         self.pop3 = poplib.POP3_SSL(host, port, context=context)
-
-        self._init_statelog()
-        self._statelog['ssl'] = {
-            'version': ssl.OPENSSL_VERSION,
-            'cipher': self.pop3.sock.cipher(),
-            'option': util.decode_ssl_options(context.options)
-        }
 
     @staticmethod
     def get_ssl_context():
