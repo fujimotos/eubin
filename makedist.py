@@ -4,8 +4,8 @@ from zipfile import ZipFile
 import os
 import glob
 
-ZIPFILE = 'bin/eubin.zip'
-BINFILE = 'bin/eubin'
+ZIPFILE = 'dist/eubin.zip'
+BINFILE = 'dist/eubin'
 MAIN_SCRIPT = b"""\
 import runpy
 if __name__ == "__main__":
@@ -13,9 +13,8 @@ if __name__ == "__main__":
 """
 
 # chdir
-filedir = os.path.dirname(__file__)
-os.chdir(os.path.join(filedir, '..'))
-os.makedirs('bin', exist_ok=True)
+os.chdir(os.path.dirname(__file__))
+os.makedirs('dist', exist_ok=True)
 
 # Bundling modules
 with ZipFile(ZIPFILE, mode='w') as zipfile:
