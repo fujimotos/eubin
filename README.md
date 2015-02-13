@@ -22,21 +22,21 @@ Put the executable in somewhere under your $PATH:
 Configuring
 -----------
 
-Eubin will search '$HOME/.eubin/' for configuration files.
+Eubin will search *$HOME/.eubin/* for configuration files.
 The name of configuration files can be anything as long as
-the extension is '.conf'.
+the extension is *.conf*.
 
-Each config file holds the settings for one email account.
-For example, If you have three account 'personal@mydomain.com'
-'work@mydomain.com', your will have two config files:
+Each config file holds the settings for an email account.
+For example, If you have two email accounts for work and
+personal use, you will have two config files as follows:
 
-  $HOME/
-  └─.eubin/
-    ├─ personal@mydomain.com.conf
-    └─ work@mydomain.com.conf
+    $HOME/
+    └─.eubin/
+      ├─ personal@mydomain.com.conf
+      └─ work@mydomain.com.conf
 
 There is a sample configuration file in the github repository
 that can be used to get started:
 
-  $ cp sample/sample@gmail.net.conf ~/personal@mydomain.com.conf
-  $ vi ~/personal@mydomain.com.conf
+    $ cp sample/sample@gmail.net.conf ~/personal@mydomain.com.conf
+    $ vi ~/personal@mydomain.com.conf
