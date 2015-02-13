@@ -27,8 +27,8 @@ The name of configuration files can be anything as long as
 the extension is `.conf`.
 
 Each config file holds the settings for an email account.
-For example, If you have two email accounts for work and
-personal use, you will have two config files as follows:
+For example, If you have two email accounts, one for work
+and one for personal use, you will have two config files:
 
     $HOME/
     └─.eubin/
