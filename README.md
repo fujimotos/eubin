@@ -11,28 +11,32 @@ Python 3.3 or later required.
 Installation
 ------------
 
-1. Run makedist.py to get a single-file executable.
+Run makedist.py to get a single-file executable:
 
   $ ./makedist.py
 
-2. Put the resulting executable in somewhere under your $PATH.
+Put the executable in somewhere under your $PATH:
 
   $ mv dist/eubin /path/to/install/
 
-3. Make the configure directory '.eubin' in your $HOME directory.
+Configuring
+-----------
 
-  $ mkdir $HOME/.eubin
+Eubin will search '$HOME/.eubin/' for configuration files.
+The name of configuration files can be anything as long as
+the extension is '.conf'.
 
-4. Copy the sample configure file to the directory.
-   (Note that the name of config file can be anything, as long as the
-    extention is '.conf')
+Each config file holds the settings for one email account.
+For example, If you have three account 'personal@mydomain.com'
+'work@mydomain.com', your will have two config files:
 
-  $ cp sample/sample@gmail.net.conf $HOME/.eubin/myuser@mydomain.com.conf
+  $HOME/
+  └─.eubin/
+    ├─ personal@mydomain.com.conf
+    └─ work@mydomain.com.conf
 
-5. Edit the configure file as you like.
+There is a sample configuration file in the github repository
+that can be used to get started:
 
-  $ vim $HOME/.eubin/myuser@mydomain.com.conf
-
-6. Run *eubin* to check everything is okay.
-
-  $ eubin
+  $ cp sample/sample@gmail.net.conf ~/personal@mydomain.com.conf
+  $ vi ~/personal@mydomain.com.conf
