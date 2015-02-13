@@ -11,11 +11,11 @@ Python 3.3 or later required.
 Installation
 ------------
 
-Run makedist.py to get a single-file executable:
+* Run makedist.py to get a single-file executable.
 
     $ ./makedist.py
 
-Put the executable in somewhere under your $PATH:
+* Put the executable in somewhere under your `$PATH`.
 
     $ mv dist/eubin /path/to/install/
 
