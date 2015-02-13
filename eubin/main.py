@@ -20,7 +20,7 @@ def get_config():
 
     pat = os.path.join(BASEDIR, '*.conf')
     for filename in glob.iglob(pat):
-        config = configparser.ConfigParser()
+        config = configparser.ConfigParser(inline_comment_prefixes=('#',))
         config.read(filename)
         config._id = os.path.basename(filename).rstrip('.conf')
         yield config
