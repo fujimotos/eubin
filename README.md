@@ -13,18 +13,18 @@ Installation
 
 Run makedist.py to get a single-file executable:
 
-  $ ./makedist.py
+    $ ./makedist.py
 
 Put the executable in somewhere under your $PATH:
 
-  $ mv dist/eubin /path/to/install/
+    $ mv dist/eubin /path/to/install/
 
 Configuring
 -----------
 
-Eubin will search *$HOME/.eubin/* for configuration files.
+Eubin will search `$HOME/.eubin/` for configuration files.
 The name of configuration files can be anything as long as
-the extension is *.conf*.
+the extension is `.conf`.
 
 Each config file holds the settings for an email account.
 For example, If you have two email accounts for work and
