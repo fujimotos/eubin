@@ -1,7 +1,9 @@
 Eubin
 =====
 
-Yet another POP3 client.
+Eubin (pronounced as 'you-bin') is a simple POP3 client with
+bare minimum features. The aim of this program is to allow
+users to fetch messages from the mail server very easily.
 
 Requirements
 ------------
