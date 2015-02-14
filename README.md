@@ -1,23 +1,23 @@
 Eubin
 =====
 
-Eubin (pronounced as 'you-bin') is a simple POP3 client with
-bare minimum features. The aim of this program is to allow
-users to fetch messages from the mail server very easily.
+Eubin (pronounced as 'you-bin') is a POP3 client with bare
+minimum features. The aim of this program is to allow users
+to fetch messages from the remote mailbox as easy as possible.
 
 Requirements
 ------------
 
-Python 3.3 or later required.
+Python 3.3 or later.
 
 Installation
 ------------
 
-* Run makedist.py to get a single-file executable.
+1. Run makedist.py to get a single-file executable.
 
     $ ./makedist.py
 
-* Put the executable in somewhere under your `$PATH`.
+2. Put the executable in somewhere under your `$PATH`.
 
     $ mv dist/eubin /path/to/install/
 
@@ -38,7 +38,7 @@ and one for personal use, you will have two config files:
       └─ work@mydomain.com.conf
 
 There is a sample configuration file in the github repository
-that can be used to get started:
+that can be used as starting point.
 
-    $ cp sample/sample@gmail.net.conf ~/personal@mydomain.com.conf
-    $ vi ~/personal@mydomain.com.conf
+    $ cp sample/sample@gmail.net.conf ~/.eubin/personal@mydomain.com.conf
+    $ vi ~/.eubin/personal@mydomain.com.conf
