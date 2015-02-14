@@ -77,13 +77,18 @@ def main():
         # Do some transaction
         dest = os.path.expanduser(retrieval['dest'])
         leavecopy = retrieval.getboolean('leavecopy')
-        leavemax = retrieval.getint('leavemax')
+        leavemax = retrieval.get('leavemax')
+
+        if leavemax.isdigit():
+            leavemax = int(leavemax)
+        else:
+            leavemax = None
 
         _log.debug('Retrieve mails to %s [leavecopy=%s]', dest, leavecopy)
 
         if leavecopy:
             maillog = os.path.join(BASEDIR, '.{}.maillog'.format(config._id))
-            client.fetchmail_copy(dest, logpath=maillog)
+            client.fetchmail_copy(dest, logpath=maillog, leavemax=leavemax)
         else:
             client.fetchmail(dest)
 
