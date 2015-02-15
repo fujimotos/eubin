@@ -47,10 +47,10 @@ Additional notes
 ----------------
 
 My observation is that any POP3 client program should be
-bundled with two critical features: locking system to
-prevent concurrency problems and careful supports on SSL.
+bundled with two critical features: *file locking mechanism*
+and *careful supports on SSL*.
 
-### 1. Locking
+### 1. File locking
 
 Usually a POP3 agent is scheduled as a cron job and quite a
 lot of users run it every minute like this:
@@ -62,6 +62,7 @@ and it can result in two process executing the same agent
 program concurrently. This situation often leads to retlieving
 the same message again and again.
 
-It is true that a user can prevent this situation by using
-`flock(1)`. But my opinion is this is the problem to be solved
-by the client program with built-in process lock feature.
+Yes, it is true that a user can prevent this situation by
+using `flock(1)`. But a client program also can solve this
+problem by providing built-in file locking mechanism, which
+sounds as saner solution to me.
