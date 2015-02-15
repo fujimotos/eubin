@@ -59,10 +59,10 @@ lot of users run it every minute like this:
 
 The problem is that each job can take longer than a minute,
 and it can result in two process executing the same agent
-program concurrently. This situation often leads to retlieving
+program concurrently. This situation often leads to retrieving
 the same message again and again.
 
 Yes, it is true that a user can prevent this situation by
 using `flock(1)`. But a client program also can solve this
 problem by providing built-in file locking mechanism, which
-sounds as saner solution to me.
+sounds to me like a much saner approach.
