@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 
+"""Command line options:
+
+  -v/--verbose  - display debugging messages to stderr.
+  -q/--quiet    - suppress (most of) warning messages.
+  -h/--help     - print this message.
+"""
+
 import getopt
 import sys
 import os
@@ -43,12 +50,15 @@ def get_password(token, passtype):
 def main():
     debug_level = logging.INFO
 
-    opts, args = getopt.getopt(sys.argv[1:], 'v', ('quiet', ))
+    opts, args = getopt.getopt(sys.argv[1:], 'vqh', ('verbose', 'quiet', 'help'))
     for key, val in opts:
-        if key == '-v':
+        if key in ('-v', '--verbose'):
             debug_level -= 10
-        elif key == '--quiet':
+        elif key in ('-q', '--quiet'):
             debug_level += 10
+        elif key in ('-h', '--help'):
+            print(__doc__, file=sys.stderr)
+            sys.exit(0)
 
     logging.basicConfig(level=debug_level, format='eubin[{levelname}]: {message}', style='{')
 
