@@ -58,7 +58,7 @@ lot of users run it every minute like this:
     */1 * * * * /usr/local/bin/my-pop3-agent
 
 The problem is that each job can take longer than a minute,
-and it can result in two process executing the same agent
+and it can result in several processes executing the same agent
 program concurrently. This situation often leads to retrieving
 the same message again and again.
 
