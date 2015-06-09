@@ -8,7 +8,7 @@ to fetch messages from the remote mailbox as easy as possible.
 Requirements
 ------------
 
-Python 3.3 or later.
+Python 3.4 or later.
 
 Installation
 ------------
