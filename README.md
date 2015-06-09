@@ -42,27 +42,3 @@ that can be used as starting point.
 
     $ cp sample/sample@gmail.net.conf ~/.eubin/personal@mydomain.com.conf
     $ vi ~/.eubin/personal@mydomain.com.conf
-
-Additional notes
-----------------
-
-My observation is that any POP3 client program should be
-bundled with two critical features: *file locking mechanism*
-and *careful supports on SSL*.
-
-### 1. File locking
-
-Usually a POP3 agent is scheduled as a cron job and quite a
-lot of users run it every minute like this:
-
-    */1 * * * * /usr/local/bin/my-pop3-agent
-
-The problem is that each job can take longer than a minute,
-and it can result in several processes executing the same agent
-program concurrently. This situation often leads to retrieving
-the same message again and again.
-
-Yes, it is true that a user can prevent this situation by
-using `flock(1)`. But a client program also can solve this
-problem by providing built-in file locking mechanism, which
-sounds to me like a much saner approach.
