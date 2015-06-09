@@ -5,7 +5,6 @@ import ssl
 import logging
 import time
 from . import maildir
-from . import util
 from . import hashlog
 
 _log = logging.getLogger(__name__)
