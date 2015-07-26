@@ -7,7 +7,7 @@ PYTHON = /usr/bin/env python3
 
 all: build/eubin
 
-build/eubin:
+build/eubin: eubin/*.py
 	mkdir -p build
 	$(COMPILE) -o build/eubin
 
