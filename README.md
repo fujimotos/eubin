@@ -54,5 +54,25 @@ and one for personal use, you will have two config files:
 There is a sample configuration file in the `sample/` directory
 that can be used as starting point.
 
-    $ cp sample/sample@gmail.net.conf ~/.eubin/personal@mydomain.com.conf
-    $ vi ~/.eubin/personal@mydomain.com.conf
+Here is the full configuration:
+
+```INI
+[server]
+host = pop.gmail.com
+port = 995
+
+[account]
+user = example@gmail.com
+pass = password
+passtype = plain  # "plain" or "shell"
+
+[retrieval]
+dest = ~/Mail/
+leavecopy = yes  # Leave a copy of mails on remote server.
+leavemax = 1000  # Number of mails to leave (Leave blank
+                 # to never delete).
+
+[security]
+apop = false
+overssl = yes
+```
