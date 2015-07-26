@@ -20,6 +20,21 @@ Clone the repository and run "make" and "make install".
     $ make
     $ sudo make install
 
+Usage
+-----
+
+1) run eubin
+
+    $ eubin
+
+2) display the list of command line options:
+
+    $ eubin --help
+
+To run eubin periodically, add the following line to cron:
+
+    */5 * * * * /usr/local/bin/eubin --quiet
+
 Configuring
 -----------
 
