@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 
-"""Command line options:
+"""Usage: eubin [-v] [-q] [-h] [--version]
 
+options:
   -v/--verbose  - display debugging messages to stderr.
   -q/--quiet    - suppress (most of) warning messages.
   -h/--help     - print this message.
+  --version     - output version information
 """
+
+version = '1.0.1'
 
 import getopt
 import sys
@@ -50,7 +54,7 @@ def get_password(token, passtype):
 def main():
     debug_level = logging.INFO
 
-    opts, args = getopt.getopt(sys.argv[1:], 'vqh', ('verbose', 'quiet', 'help'))
+    opts, args = getopt.getopt(sys.argv[1:], 'vqh', ('verbose', 'quiet', 'help', 'version'))
     for key, val in opts:
         if key in ('-v', '--verbose'):
             debug_level -= 10
@@ -58,6 +62,9 @@ def main():
             debug_level += 10
         elif key in ('-h', '--help'):
             print(__doc__, file=sys.stderr)
+            sys.exit(0)
+        elif key in ('--version',):
+            print('eubin {}'.format(version), file=sys.stderr)
             sys.exit(0)
 
     logging.basicConfig(level=debug_level, format='eubin[{levelname}]: {message}', style='{')
