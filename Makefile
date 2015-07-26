@@ -3,6 +3,7 @@ exec_prefix = $(prefix)
 bindir = $(exec_prefix)/bin
 
 COMPILE = tools/compile.py
+PYTHON = /usr/bin/env python3
 
 all: build/eubin
 
@@ -19,4 +20,7 @@ install:
 uninstall:
 	rm $(bindir)/eubin
 
-.PHONY: all clean install uninstall
+test:
+	$(PYTHON) -m unittest discover -b -v test
+
+.PHONY: all clean install uninstall test
