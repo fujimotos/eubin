@@ -10,16 +10,15 @@ Requirements
 
 Python 3.4 or later.
 
-Installation
-------------
+How to install
+--------------
 
-1. Run makedist.py to get a single-file executable.
+Clone the repository and run "make" and "make install".
 
-    $ ./makedist.py
-
-2. Put the executable in somewhere under your `$PATH`.
-
-    $ mv dist/eubin /path/to/install/
+    $ git clone https://github.com/fujimotos/eubin.git
+    $ cd eubin
+    $ make
+    $ sudo make install
 
 Configuring
 -----------
