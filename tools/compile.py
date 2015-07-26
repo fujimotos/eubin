@@ -1,35 +1,37 @@
 #!/usr/bin/env python3
 
 from zipfile import ZipFile
-import os
+import io
+import sys
 import glob
+import getopt
 
-ZIPFILE = 'dist/eubin.zip'
-BINFILE = 'dist/eubin'
+HEADER = b'#!/usr/bin/env python3\n'
 MAIN_SCRIPT = b"""\
 import runpy
 if __name__ == "__main__":
     runpy.run_module('eubin.main', run_name='__main__')
 """
 
-# chdir
-os.chdir(os.path.dirname(__file__))
-os.makedirs('dist', exist_ok=True)
+if __name__ == '__main__':
+    binfile = 'build/eubin'
 
-# Bundling modules
-with ZipFile(ZIPFILE, mode='w') as zipfile:
-    for path in glob.glob('eubin/*.py'):
-        zipfile.write(path)
+    opts, args = getopt.getopt(sys.argv[1:], 'o:')
+    for key, val in opts:
+        if key == '-o':
+            binfile = val
 
-    # Define entry point
-    zipfile.writestr('__main__.py', MAIN_SCRIPT)
+    binbuff = io.BytesIO()
 
-# Generate executable
-with open(BINFILE, 'wb') as fw:
-    fw.write(b'#!/usr/bin/env python3\n')
-    fw.write(open(ZIPFILE, 'rb').read())
+    # Bundling modules
+    with ZipFile(binbuff, mode='w') as zipfile:
+        for path in glob.glob('eubin/*.py'):
+            zipfile.write(path)
 
-os.chmod(BINFILE, 0o755)
-os.remove(ZIPFILE)
+        # Define entry point
+        zipfile.writestr('__main__.py', MAIN_SCRIPT)
 
-print('Build:', BINFILE)
+    # Generate executable
+    with open(binfile, 'wb') as binfile:
+        binfile.write(HEADER)
+        binfile.write(binbuff.getvalue())
