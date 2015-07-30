@@ -15,6 +15,7 @@ import getopt
 import sys
 import os
 import logging
+import signal
 from . import pop3
 from .pidlock import PIDLock
 
@@ -74,6 +75,10 @@ def main():
         server, account, retrieval, security = \
             (config[key] for key in ('server', 'account', 'retrieval', 'security'))
 
+        # Setup timer
+        timeout = retrieval.getint('timeout', 0)
+        signal.alarm(timeout)
+
         # Initiate the connection
         host, port = server['host'], server['port']
         overssl = security.getboolean('overssl')
@@ -110,6 +115,7 @@ def main():
             client.fetchmail(dest)
 
         # Enter the update state.
+        signal.alarm(0)
         client.quit()
 
 if __name__ == '__main__':

@@ -4,7 +4,6 @@ import os
 import time
 import glob
 import logging
-from signal import alarm
 from socket import gethostname
 from binascii import hexlify
 
@@ -31,7 +30,6 @@ def deliver(maildir, lines):
         raise OSError('cannot safely create a file on tmp/')
 
     tmpfile, newfile = 'tmp/' + uid, 'new/' + uid
-    alarm(86400)  # 24-hour timer.
 
     _log.debug("* New file: '%s'", newfile)
 
@@ -41,7 +39,6 @@ def deliver(maildir, lines):
 
     os.link(tmpfile, newfile)
     os.remove(tmpfile)
-    alarm(0)  # Reset timer
     return uid
 
 def cleanup(maildir):
