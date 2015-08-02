@@ -9,7 +9,7 @@ options:
   --version     - output version information
 """
 
-version = '1.0.2'
+version = '1.0.3'
 
 import getopt
 import sys
