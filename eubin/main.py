@@ -87,6 +87,10 @@ def main():
 
         client = pop3.connect(host, port, ssl=overssl)
 
+        if security.getboolean('starttls'):
+            _log.info("Start TLS connection.")
+            client.stls()
+
         # Authorization
         user = account['user']
         password = get_password(account['pass'], account['passtype'])
