@@ -78,3 +78,8 @@ apop = no
 overssl = yes
 starttls = false
 ```
+
+Changelog
+---------
+
+* 2015-08-02 (v1.0.3) Add a support for STARTTLS.
