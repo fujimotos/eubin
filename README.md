@@ -74,6 +74,7 @@ leavemax = 1000  # Number of mails to leave (Leave blank
 timeout = 600
 
 [security]
-apop = false
+apop = no
 overssl = yes
+starttls = false
 ```
