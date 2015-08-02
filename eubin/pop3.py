@@ -13,6 +13,10 @@ class Client:
     def __init__(self, host, port):
         self.pop3 = poplib.POP3(host, port)
 
+    def stls(self):
+        context = ssl.create_default_context()
+        self.pop3.stls(context=context)
+
     def login(self, user, password, apop=False):
         if apop:
             self.pop3.apop(user, password)
