@@ -37,21 +37,6 @@ def get_config():
         config._id = os.path.basename(filename).rstrip('.conf')
         yield config
 
-def get_password(token, passtype):
-    password = None
-
-    if passtype == 'plain':
-        password = token
-    elif passtype == 'shell':
-        import shlex
-        from subprocess import check_output
-        cmd = shlex.split(token)
-        password = check_output(cmd).decode().strip()
-    else:
-        raise ValueError('unknown password type: {}'.format(passtype))
-
-    return password
-
 def main():
     debug_level = logging.INFO
 
@@ -93,7 +78,7 @@ def main():
 
         # Authorization
         user = account['user']
-        password = get_password(account['pass'], account['passtype'])
+        password = account['pass']
         apop = security.getboolean('apop')
 
         _log.debug('Login as %s [APOP=%s]', user, apop)
