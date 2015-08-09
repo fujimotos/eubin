@@ -45,7 +45,7 @@ class Client:
                 filename = maildir.deliver(destdir, lines)
                 hashlog.append(logpath, md5sum)
 
-            if leavemax and leavemax <= idx:
+            if leavemax and idx < (count - leavemax):
                 self.pop3.dele(idx+1)
 
     def quit(self):
