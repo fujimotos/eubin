@@ -21,11 +21,9 @@ from .pidlock import PIDLock
 
 _log = logging.getLogger(__name__)
 
-# init
 BASEDIR = os.path.expanduser('~/.eubin')
 LOCKFILE = os.path.join(BASEDIR, 'lockfile')
 
-# utils
 def get_config():
     import configparser
     import glob
@@ -55,7 +53,6 @@ def main():
 
     logging.basicConfig(level=debug_level, format='eubin[{levelname}]: {message}', style='{')
 
-    # Main
     for config in get_config():
         server, account, retrieval, security = \
             (config[key] for key in ('server', 'account', 'retrieval', 'security'))
@@ -103,9 +100,8 @@ def main():
         else:
             client.fetchmail(dest)
 
-        # Enter the update state.
-        signal.alarm(0)
         client.quit()
+        signal.alarm(0)
 
 if __name__ == '__main__':
     with PIDLock(LOCKFILE).acquire():
