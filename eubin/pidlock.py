@@ -18,8 +18,10 @@ class PIDLock:
         self.release()
 
     def acquire(self):
-        if self.check():
-            raise PIDLockException('process already running')
+        pid = self.check()
+
+        if pid is not None:
+            raise PIDLockException('eubin already running as pid {}'.format(pid))
 
         with open(self.lockfile, 'w') as fw:
             fw.write(str(self.pid))
@@ -30,26 +32,25 @@ class PIDLock:
         os.remove(self.lockfile)
 
     def check(self):
-        # Check if the lock file does exist.
         if not os.path.exists(self.lockfile):
-            return False
+            return
 
-        # If the lock file does exist, then check the
-        # corresponding process is still running.
+        res = None
+
         with open(self.lockfile) as fp:
             pid = int(fp.read())
 
-        isalive = self._isalive(pid)
-
-        if not isalive:
+        if self.isalive(pid):
+            res = pid
+        else:
             _log.warning('Lock file found, but no process running as pid %s.', pid)
             _log.warning('Clean up the old lock file...')
             self.release()
 
-        return isalive
+        return res
 
     @staticmethod
-    def _isalive(pid):
+    def isalive(pid):
         if pid < 1: return False
 
         res = True
