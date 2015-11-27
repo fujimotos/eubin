@@ -38,7 +38,10 @@ class PIDLock:
         res = None
 
         with open(self.lockfile) as fp:
-            pid = int(fp.read())
+            try:
+                pid = int(fp.read())
+            except ValueError:
+                pid = 0
 
         if self.isalive(pid):
             res = pid
