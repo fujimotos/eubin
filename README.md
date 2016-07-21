@@ -1,9 +1,7 @@
 Eubin
 =====
 
-Eubin (pronounced as 'you-bin') is a POP3 client with bare
-minimum features. The aim of this program is to allow users
-to fetch messages from the remote mailbox as easy as possible.
+Eubin is a dumb mail retriever which only supports POP3 and Maildir.
 
 Requirements
 ------------
@@ -35,16 +33,15 @@ To run eubin periodically, add the following line to cron:
 
     */5 * * * * /usr/local/bin/eubin --quiet
 
-Configuring
------------
+Configuration
+-------------
 
-Eubin will search `$HOME/.eubin/` for configuration files.
-The name of configuration files can be anything as long as
-the extension is `.conf`.
+Eubin will search `$HOME/.eubin/` for configuration files. The name of
+configuration files can be anything as long as the extension is `.conf`.
 
-Each config file holds the settings for an email account.
-For example, If you have two email accounts, one for work
-and one for personal use, you will have two config files:
+Each file holds the configuration for a single email account. For
+example, If you have two email accounts, one for work and one for
+personal use, you will have two config files:
 
     $HOME/
     └─.eubin/
@@ -73,8 +70,3 @@ apop = no
 overssl = yes
 starttls = no
 ```
-
-Changelog
----------
-
-* 2015-08-02 (v1.0.3) Add a support for STARTTLS.
