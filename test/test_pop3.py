@@ -57,10 +57,10 @@ class TestPOP3(unittest.TestCase):
         self.assertEqual(next(recvlog), b'APOP user 88670a99aa1930515aae5569677fac19\r\n')
         self.assertEqual(next(recvlog), b'QUIT\r\n')
 
-    def test_fetchmail(self):
+    def test_fetch(self):
         client = pop3.Client(self.host, self.port)
         client.login('user', 'password')
-        client.fetchmail(self.mailbox)
+        client.fetch(self.mailbox)
         client.quit()
 
         recvlog = self.server.get_logiter()
@@ -74,11 +74,11 @@ class TestPOP3(unittest.TestCase):
         self.assertEqual(next(recvlog), b'DELE 2\r\n')
         self.assertEqual(next(recvlog), b'QUIT\r\n')
 
-    def test_fetchmail_copy(self):
+    def test_fetch_copy(self):
         client = pop3.Client(self.host, self.port)
         client.login('user', 'password')
-        client.fetchmail_copy(self.mailbox, logpath=self.hashlog.name)
-        client.fetchmail_copy(self.mailbox, logpath=self.hashlog.name) # Retry
+        client.fetch_copy(self.mailbox, logpath=self.hashlog.name)
+        client.fetch_copy(self.mailbox, logpath=self.hashlog.name) # Retry
         client.quit()
 
         recvlog = self.server.get_logiter()
@@ -95,10 +95,10 @@ class TestPOP3(unittest.TestCase):
         self.assertEqual(next(recvlog), b'TOP 2 0\r\n')
         self.assertEqual(next(recvlog), b'QUIT\r\n')
 
-    def test_fetchmail_contents(self):
+    def test_fetch_contents(self):
         client = pop3.Client(self.host, self.port)
         client.login('user', 'password')
-        client.fetchmail(self.mailbox)
+        client.fetch(self.mailbox)
         client.quit()
 
         # Enter into 'new' directory of the mailbox.

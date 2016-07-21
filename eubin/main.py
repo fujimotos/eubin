@@ -99,9 +99,9 @@ def main():
 
         if leavecopy:
             maillog = os.path.join(BASEDIR, '.{}.maillog'.format(config._id))
-            client.fetchmail_copy(dest, logpath=maillog, leavemax=leavemax)
+            client.fetch_copy(dest, logpath=maillog, leavemax=leavemax)
         else:
-            client.fetchmail(dest)
+            client.fetch(dest)
 
         client.quit()
         signal.alarm(0)

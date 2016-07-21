@@ -24,7 +24,7 @@ class Client:
             self.pop3.user(user)
             self.pop3.pass_(password)
 
-    def fetchmail(self, destdir):
+    def fetch(self, destdir):
         count, size = self.pop3.stat()
 
         for idx in range(count):
@@ -32,7 +32,7 @@ class Client:
             filename = maildir.deliver(destdir, lines)
             self.pop3.dele(idx+1)
 
-    def fetchmail_copy(self, destdir, logpath, leavemax=None):
+    def fetch_copy(self, destdir, logpath, leavemax=None):
         count, size = self.pop3.stat()
         maillog = hashlog.load(logpath)
 
