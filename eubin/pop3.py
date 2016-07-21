@@ -56,15 +56,3 @@ class ClientSSL(Client):
     def __init__(self, host, port):
         context = ssl.create_default_context()
         self.pop3 = poplib.POP3_SSL(host, port, context=context)
-
-
-# An interface function for Client/ClientSSL.
-# Use this function as follows:
-# >>> from eubin import pop3
-# >>> client = pop3.connect('example.com', 111)
-def connect(host, port, ssl=False):
-    if ssl:
-        client = ClientSSL(host, port)
-    else:
-        client = Client(host, port)
-    return client

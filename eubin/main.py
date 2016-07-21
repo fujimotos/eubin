@@ -67,7 +67,10 @@ def main():
 
         _log.info("Connect to %s:%s [SSL=%s]", host, port, overssl)
 
-        client = pop3.connect(host, port, ssl=overssl)
+        if overssl:
+            client = pop3.ClientSSL(host, port)
+        else:
+            client = pop3.Client(host, port)
 
         if security.getboolean('starttls'):
             _log.info("Start TLS connection.")
