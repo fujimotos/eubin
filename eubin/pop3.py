@@ -10,7 +10,7 @@ from . import hashlog
 _log = logging.getLogger(__name__)
 
 class Client:
-    def __init__(self, host, port):
+    def __init__(self, host, port=110):
         self.pop3 = poplib.POP3(host, port)
 
     def stls(self):
@@ -53,6 +53,6 @@ class Client:
 
 
 class ClientSSL(Client):
-    def __init__(self, host, port):
+    def __init__(self, host, port=995):
         context = ssl.create_default_context()
         self.pop3 = poplib.POP3_SSL(host, port, context=context)
