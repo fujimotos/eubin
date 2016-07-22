@@ -35,7 +35,66 @@ def get_config():
         config._id = os.path.basename(filename).rstrip('.conf')
         yield config
 
-def main():
+
+def fetch_new_mail(config):
+    """Go to POP3 server and download new messages."""
+    # Expand sections
+    server = config['server']
+    account = config['account']
+    retrieval = config['retrieval']
+    security = config['security']
+
+    # Setup timer
+    timeout = retrieval.getint('timeout', 0)
+    signal.alarm(timeout)
+
+    # Initiate the connection
+    host, port = server['host'], server['port']
+    overssl = security.getboolean('overssl')
+
+    _log.info("Connect to %s:%s [SSL=%s]", host, port, overssl)
+
+    if overssl:
+        client = pop3.ClientSSL(host, port)
+    else:
+        client = pop3.Client(host, port)
+
+    if security.getboolean('starttls'):
+        _log.info("Start TLS connection.")
+        client.stls()
+
+    # Authorization
+    user = account['user']
+    password = account['pass']
+    apop = security.getboolean('apop')
+
+    _log.debug('Login as %s [APOP=%s]', user, apop)
+
+    client.login(user, password, apop=apop)
+
+    # Do some transaction
+    dest = os.path.expanduser(retrieval['dest'])
+    leavecopy = retrieval.getboolean('leavecopy')
+    leavemax = retrieval.get('leavemax')
+
+    if leavemax.isdigit():
+        leavemax = int(leavemax)
+    else:
+        leavemax = None
+
+    _log.debug('Retrieve mails to %s [leavecopy=%s]', dest, leavecopy)
+
+    if leavecopy:
+        maillog = os.path.join(BASEDIR, '.{}.maillog'.format(config._id))
+        client.fetch_copy(dest, logpath=maillog, leavemax=leavemax)
+    else:
+        client.fetch(dest)
+
+    client.quit()
+    signal.alarm(0)
+
+
+if __name__ == '__main__':
     debug_level = logging.INFO
 
     opts, args = getopt.getopt(sys.argv[1:], 'vqh', ('verbose', 'quiet', 'help', 'version'))
@@ -53,59 +112,6 @@ def main():
 
     logging.basicConfig(level=debug_level, format='eubin[{levelname}]: {message}', style='{')
 
-    for config in get_config():
-        server, account, retrieval, security = \
-            (config[key] for key in ('server', 'account', 'retrieval', 'security'))
-
-        # Setup timer
-        timeout = retrieval.getint('timeout', 0)
-        signal.alarm(timeout)
-
-        # Initiate the connection
-        host, port = server['host'], server['port']
-        overssl = security.getboolean('overssl')
-
-        _log.info("Connect to %s:%s [SSL=%s]", host, port, overssl)
-
-        if overssl:
-            client = pop3.ClientSSL(host, port)
-        else:
-            client = pop3.Client(host, port)
-
-        if security.getboolean('starttls'):
-            _log.info("Start TLS connection.")
-            client.stls()
-
-        # Authorization
-        user = account['user']
-        password = account['pass']
-        apop = security.getboolean('apop')
-
-        _log.debug('Login as %s [APOP=%s]', user, apop)
-
-        client.login(user, password, apop=apop)
-
-        # Do some transaction
-        dest = os.path.expanduser(retrieval['dest'])
-        leavecopy = retrieval.getboolean('leavecopy')
-        leavemax = retrieval.get('leavemax')
-
-        if leavemax.isdigit():
-            leavemax = int(leavemax)
-        else:
-            leavemax = None
-
-        _log.debug('Retrieve mails to %s [leavecopy=%s]', dest, leavecopy)
-
-        if leavecopy:
-            maillog = os.path.join(BASEDIR, '.{}.maillog'.format(config._id))
-            client.fetch_copy(dest, logpath=maillog, leavemax=leavemax)
-        else:
-            client.fetch(dest)
-
-        client.quit()
-        signal.alarm(0)
-
-if __name__ == '__main__':
     with PIDLock(LOCKFILE).acquire():
-        main()
+        for config in get_config():
+            fetch_new_mail(config)
