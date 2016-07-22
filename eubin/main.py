@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Usage: eubin [-v] [-q] [-h] [--version]
+"""Usage: eubin [-v] [-q] [-h] [--version] [config_file]
 
 options:
   -v/--verbose  - display debugging messages to stderr.
@@ -16,6 +16,9 @@ import sys
 import os
 import logging
 import signal
+import glob
+from configparser import ConfigParser
+
 from . import pop3
 from .pidlock import PIDLock
 
@@ -24,20 +27,13 @@ _log = logging.getLogger(__name__)
 BASEDIR = os.path.expanduser('~/.eubin')
 LOCKFILE = os.path.join(BASEDIR, 'lockfile')
 
-def get_config():
-    import configparser
-    import glob
 
-    pat = os.path.join(BASEDIR, '*.conf')
-    for filename in glob.iglob(pat):
-        config = configparser.ConfigParser(inline_comment_prefixes=('#',))
-        config.read(filename)
-        config._id = os.path.basename(filename).rstrip('.conf')
-        yield config
-
-
-def fetch_new_mail(config):
+def fetch_new_mail(config_path):
     """Go to POP3 server and download new messages."""
+    # Parse config
+    config = ConfigParser(inline_comment_prefixes=('#',))
+    config.read(config_path)
+
     # Expand sections
     server = config['server']
     account = config['account']
@@ -85,8 +81,10 @@ def fetch_new_mail(config):
     _log.debug('Retrieve mails to %s [leavecopy=%s]', dest, leavecopy)
 
     if leavecopy:
-        maillog = os.path.join(BASEDIR, '.{}.maillog'.format(config._id))
-        client.fetch_copy(dest, logpath=maillog, leavemax=leavemax)
+        basedir, name = os.path.split(config_path)
+        name = '.{}.maillog'.format(name.rstrip('conf'))
+        logpath = os.path.join(basedir, name)
+        client.fetch_copy(dest, logpath=logpath, leavemax=leavemax)
     else:
         client.fetch(dest)
 
@@ -112,6 +110,11 @@ if __name__ == '__main__':
 
     logging.basicConfig(level=debug_level, format='eubin[{levelname}]: {message}', style='{')
 
+    if args:
+        targets = [os.path.abspath(args[0])]
+    else:
+        targets = glob.iglob(os.path.join(BASEDIR, '*.conf'))
+
     with PIDLock(LOCKFILE).acquire():
-        for config in get_config():
-            fetch_new_mail(config)
+        for config_path in targets:
+            fetch_new_mail(config_path)
