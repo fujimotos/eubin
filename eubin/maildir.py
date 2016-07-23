@@ -9,10 +9,13 @@ from binascii import hexlify
 
 _log = logging.getLogger(__name__)
 
+
 def _getuid():
     now = str(time.time()).split('.')
     urandom = hexlify(os.urandom(5)).decode()
-    return '{}.M{}R{}P{}.{}'.format(now[0], now[1], urandom, os.getpid(), gethostname())
+    return '{}.M{}R{}P{}.{}'.format(now[0], now[1], urandom,
+                                    os.getpid(), gethostname())
+
 
 def deliver(maildir, lines):
     os.chdir(maildir)
@@ -40,6 +43,7 @@ def deliver(maildir, lines):
     os.link(tmpfile, newfile)
     os.remove(tmpfile)
     return uid
+
 
 def cleanup(maildir):
     os.chdir(maildir)

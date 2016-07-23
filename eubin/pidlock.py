@@ -3,8 +3,10 @@ import logging
 
 _log = logging.getLogger(__name__)
 
+
 class PIDLockException(Exception):
     pass
+
 
 class PIDLock:
     def __init__(self, lockfile):
@@ -21,7 +23,8 @@ class PIDLock:
         pid = self.check()
 
         if pid is not None:
-            raise PIDLockException('eubin already running as pid {}'.format(pid))
+            msg = 'eubin already running as pid {}'.format(pid)
+            raise PIDLockException(msg)
 
         with open(self.lockfile, 'w') as fw:
             fw.write(str(self.pid))
@@ -46,7 +49,8 @@ class PIDLock:
         if self.isalive(pid):
             res = pid
         else:
-            _log.warning('Lock file found, but no process running as pid %s.', pid)
+            _log.warning('Lock file found, but no process running'
+                         'as pid %s.', pid)
             _log.warning('Clean up the old lock file...')
             self.release()
 
@@ -54,7 +58,8 @@ class PIDLock:
 
     @staticmethod
     def isalive(pid):
-        if pid < 1: return False
+        if pid < 1:
+            return False
 
         res = True
         try:

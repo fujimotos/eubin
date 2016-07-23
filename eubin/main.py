@@ -9,8 +9,6 @@ options:
   --version     - output version information
 """
 
-version = '1.0.3'
-
 import sys
 import os
 import logging
@@ -24,6 +22,7 @@ from .pidlock import PIDLock
 
 _log = logging.getLogger(__name__)
 
+VERSION = '1.0.3'
 BASEDIR = os.path.expanduser('~/.eubin')
 
 
@@ -82,7 +81,8 @@ def fetch_new_mail(config_path):
 if __name__ == '__main__':
     debug_level = logging.INFO
 
-    opts, args = getopt(sys.argv[1:], 'vqh', ('verbose', 'quiet', 'help', 'version'))
+    opts, args = getopt(sys.argv[1:], 'vqh',
+                        ('verbose', 'quiet', 'help', 'version'))
     for key, val in opts:
         if key in ('-v', '--verbose'):
             debug_level -= 10
@@ -92,10 +92,11 @@ if __name__ == '__main__':
             print(__doc__, file=sys.stderr)
             sys.exit(0)
         elif key in ('--version',):
-            print('eubin {}'.format(version), file=sys.stderr)
+            print('eubin {}'.format(VERSION), file=sys.stderr)
             sys.exit(0)
 
-    logging.basicConfig(level=debug_level, format='eubin[{levelname}]: {message}', style='{')
+    logging.basicConfig(level=debug_level, style='{',
+                        format='eubin[{levelname}]: {message}')
 
     if args:
         targets = [os.path.abspath(args[0])]

@@ -9,6 +9,7 @@ from . import hashlog
 
 _log = logging.getLogger(__name__)
 
+
 class Client:
     def __init__(self, host, port=110):
         _log.info('Connect to %s:%s [SSL=False]', host, port)
