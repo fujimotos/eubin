@@ -11,12 +11,12 @@ options:
 
 version = '1.0.3'
 
-import getopt
 import sys
 import os
 import logging
 import signal
 import glob
+from getopt import getopt
 from configparser import ConfigParser
 
 from . import pop3
@@ -40,46 +40,34 @@ def fetch_new_mail(config_path):
     security = config['security']
 
     # Setup timer
-    timeout = retrieval.getint('timeout', 0)
-    signal.alarm(timeout)
+    signal.alarm(retrieval.getint('timeout', 0))
 
     # Initiate the connection
     host, port = server['host'], server['port']
-    overssl = security.getboolean('overssl')
 
-    _log.info("Connect to %s:%s [SSL=%s]", host, port, overssl)
-
-    if overssl:
+    if security.getboolean('overssl'):
         client = pop3.ClientSSL(host, port)
     else:
         client = pop3.Client(host, port)
 
     if security.getboolean('starttls'):
-        _log.info("Start TLS connection.")
         client.stls()
 
     # Authorization
-    user = account['user']
-    password = account['pass']
-    apop = security.getboolean('apop')
-
-    _log.debug('Login as %s [APOP=%s]', user, apop)
-
-    client.login(user, password, apop=apop)
+    client.login(user=account['user'],
+                 password=account['pass'],
+                 apop=security.getboolean('apop'))
 
     # Do some transaction
     dest = os.path.expanduser(retrieval['dest'])
-    leavecopy = retrieval.getboolean('leavecopy')
-    leavemax = retrieval.get('leavemax')
+    leavemax = retrieval.get('leavemax', '')
 
     if leavemax.isdigit():
         leavemax = int(leavemax)
     else:
         leavemax = None
 
-    _log.debug('Retrieve mails to %s [leavecopy=%s]', dest, leavecopy)
-
-    if leavecopy:
+    if retrieval.getboolean('leavecopy'):
         basedir, name = os.path.split(config_path)
         name = '.{}.maillog'.format(name.rstrip('conf'))
         logpath = os.path.join(basedir, name)
@@ -94,7 +82,7 @@ def fetch_new_mail(config_path):
 if __name__ == '__main__':
     debug_level = logging.INFO
 
-    opts, args = getopt.getopt(sys.argv[1:], 'vqh', ('verbose', 'quiet', 'help', 'version'))
+    opts, args = getopt(sys.argv[1:], 'vqh', ('verbose', 'quiet', 'help', 'version'))
     for key, val in opts:
         if key in ('-v', '--verbose'):
             debug_level -= 10

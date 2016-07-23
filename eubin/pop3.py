@@ -11,13 +11,16 @@ _log = logging.getLogger(__name__)
 
 class Client:
     def __init__(self, host, port=110):
+        _log.info('Connect to %s:%s [SSL=False]', host, port)
         self.pop3 = poplib.POP3(host, port)
 
     def stls(self):
+        _log.info('Start TLS connection')
         context = ssl.create_default_context()
         self.pop3.stls(context=context)
 
     def login(self, user, password, apop=False):
+        _log.debug('Login as %s [APOP=%s]', user, apop)
         if apop:
             self.pop3.apop(user, password)
         else:
@@ -25,6 +28,7 @@ class Client:
             self.pop3.pass_(password)
 
     def fetch(self, destdir):
+        _log.debug('Download to "%s" [COPY=False]', destdir)
         count, size = self.pop3.stat()
 
         for idx in range(count):
@@ -33,6 +37,7 @@ class Client:
             self.pop3.dele(idx+1)
 
     def fetch_copy(self, destdir, logpath, leavemax=None):
+        _log.debug('Download to "%s" [COPY=True]', destdir)
         count, size = self.pop3.stat()
         maillog = hashlog.load(logpath)
 
@@ -54,5 +59,6 @@ class Client:
 
 class ClientSSL(Client):
     def __init__(self, host, port=995):
+        _log.info('Connect to %s:%s [SSL=True]', host, port)
         context = ssl.create_default_context()
         self.pop3 = poplib.POP3_SSL(host, port, context=context)
