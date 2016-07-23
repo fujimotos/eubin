@@ -25,7 +25,6 @@ from .pidlock import PIDLock
 _log = logging.getLogger(__name__)
 
 BASEDIR = os.path.expanduser('~/.eubin')
-LOCKFILE = os.path.join(BASEDIR, 'lockfile')
 
 
 def fetch_new_mail(config_path):
@@ -115,6 +114,6 @@ if __name__ == '__main__':
     else:
         targets = glob.iglob(os.path.join(BASEDIR, '*.conf'))
 
-    with PIDLock(LOCKFILE).acquire():
-        for config_path in targets:
+    for config_path in targets:
+        with PIDLock(config_path + '.lockfile').acquire():
             fetch_new_mail(config_path)
