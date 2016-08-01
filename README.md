@@ -36,8 +36,9 @@ To run eubin periodically, add the following line to cron:
 Configuration
 -------------
 
-Eubin will search `$HOME/.eubin/` for configuration files. The name of
-configuration files can be anything as long as the extension is `.conf`.
+Eubin will search `$HOME/.eubin/` for configuration files by default.
+The name of configuration files can be anything as long as the extension
+is `.conf`.
 
 Each file holds the configuration for a single email account. For
 example, If you have two email accounts, one for work and one for
@@ -62,7 +63,7 @@ pass = password
 [retrieval]
 dest = ~/Mail/
 leavecopy = yes  # Leave a copy of mails on remote server.
-leavemax = 1000  # Number of mails to leave (Leave blank to never delete).
+leavemax =       # Number of mails to leave (Leave blank to never delete).
 timeout = 600  # (sec)
 
 [security]
