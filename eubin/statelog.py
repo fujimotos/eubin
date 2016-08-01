@@ -13,6 +13,6 @@ def load(path):
 def save(path, state):
     tmpfile = path + '.tmp'
     with open(tmpfile, 'wb') as fp:
-        for uid in state:
+        for uid in sorted(state):
             fp.write(uid + b'\n')
     os.rename(tmpfile, path)
