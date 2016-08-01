@@ -29,13 +29,15 @@ class Client:
             self.pop3.pass_(password)
 
     def fetch(self, destdir):
-        _log.debug('Download to "%s" [COPY=False]', destdir)
         count, size = self.pop3.stat()
+        _log.debug('Download to "%s" [COPY=False]', destdir)
 
         for idx in range(count):
             msg, lines, octet = self.pop3.retr(idx+1)
-            filename = maildir.deliver(destdir, lines)
+            maildir.deliver(destdir, lines)
             self.pop3.dele(idx+1)
+
+        _log.info('%s messages retrieved (%s bytes)', count, size)
 
     def fetch_copy(self, destdir, logpath, leavemax=None):
         count, size = self.pop3.stat()
