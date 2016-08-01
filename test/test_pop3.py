@@ -20,6 +20,7 @@ class TestPOP3(unittest.TestCase):
             'retr': b'+OK\r\n<mail-text>\r\n.\r\n',
             'quit': b'+OK Good bye!',
             'top': b'+OK\r\n<header>\r\n.\r\n',
+            'uidl': b'+OK\r\n1 001\r\n2 002\r\n.\r\n',
         })
         self.host, self.port = self.server.get_conninfo()
         Thread(target=self.server.run).start()
@@ -86,13 +87,11 @@ class TestPOP3(unittest.TestCase):
         self.assertEqual(next(recvlog), b'USER user\r\n')
         self.assertEqual(next(recvlog), b'PASS password\r\n')
         self.assertEqual(next(recvlog), b'STAT\r\n')
-        self.assertEqual(next(recvlog), b'TOP 1 0\r\n')
+        self.assertEqual(next(recvlog), b'UIDL\r\n')
         self.assertEqual(next(recvlog), b'RETR 1\r\n')
-        self.assertEqual(next(recvlog), b'TOP 2 0\r\n')
         self.assertEqual(next(recvlog), b'RETR 2\r\n')
         self.assertEqual(next(recvlog), b'STAT\r\n')
-        self.assertEqual(next(recvlog), b'TOP 1 0\r\n')
-        self.assertEqual(next(recvlog), b'TOP 2 0\r\n')
+        self.assertEqual(next(recvlog), b'UIDL\r\n')
         self.assertEqual(next(recvlog), b'QUIT\r\n')
 
     def test_fetch_contents(self):
