@@ -75,9 +75,8 @@ def fetch_new_mail(config_path):
         leavemax = None
 
     if retrieval.getboolean('leavecopy'):
-        basedir, name = os.path.split(config_path)
-        name = '.{}.maillog'.format(name.rstrip('conf'))
-        logpath = os.path.join(basedir, name)
+        basedir, filename = os.path.split(config_path)
+        logpath = os.path.join(basedir, '.{}.state'.format(filename))
         client.fetch_copy(dest, logpath=logpath, leavemax=leavemax)
     else:
         client.fetch(dest)

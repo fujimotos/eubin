@@ -5,7 +5,7 @@ import ssl
 import logging
 import time
 from . import maildir
-from . import hashlog
+from . import statelog
 
 _log = logging.getLogger(__name__)
 
@@ -38,21 +38,30 @@ class Client:
             self.pop3.dele(idx+1)
 
     def fetch_copy(self, destdir, logpath, leavemax=None):
-        _log.debug('Download to "%s" [COPY=True]', destdir)
         count, size = self.pop3.stat()
-        maillog = hashlog.load(logpath)
+        _log.debug('Download to "%s" [COPY=True]', destdir)
+        _log.debug('%s messages in maildrop (%s bytes)', count, size)
 
-        for idx in range(count):
-            header = self.pop3.top(idx+1, 0)[1]
-            md5sum = hashlog.md5sum(header)
+        prev_state = statelog.load(logpath)
+        state, retrieved = set(), []
+        for line in self.pop3.uidl()[1]:
+            tokens = line.split(b' ', 1)
+            msgnum, uid = int(tokens[0]), tokens[1]
 
-            if md5sum not in maillog:
-                msg, lines, octet = self.pop3.retr(idx+1)
-                filename = maildir.deliver(destdir, lines)
-                hashlog.append(logpath, md5sum)
+            if uid not in prev_state:
+                msg, lines, octet = self.pop3.retr(msgnum)
+                maildir.deliver(destdir, lines)
+                retrieved.append(octet)
 
-            if leavemax and idx < (count - leavemax):
-                self.pop3.dele(idx+1)
+            # Leave last N messages on the spool.
+            if leavemax and msgnum <= (count - leavemax):
+                self.pop3.dele(msgnum)
+            else:
+                state.add(uid)
+
+        statelog.save(logpath, state)
+        _log.info('%s messages retrieved (%s bytes)',
+                  len(retrieved), sum(retrieved))
 
     def quit(self):
         self.pop3.quit()
