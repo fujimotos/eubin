@@ -22,7 +22,7 @@ from . import pop3
 
 _log = logging.getLogger(__name__)
 
-VERSION = '1.0.3'
+VERSION = '1.1.0'
 BASEDIR = os.path.expanduser('~/.eubin')
 
 
