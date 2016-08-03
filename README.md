@@ -71,3 +71,15 @@ apop = no
 overssl = yes
 starttls = no
 ```
+
+Uninstallation
+--------------
+
+Eubin is a single-file executable. So you can uninstall the program cleanly
+by just removing it:
+
+    $ sudo rm /usr/local/bin/eubin
+
+The Makefile also supports 'unintall' directive as well:
+
+    $ sudo make uninstall
