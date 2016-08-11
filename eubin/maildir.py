@@ -4,17 +4,22 @@ import os
 import time
 import glob
 import logging
-from socket import gethostname
+import socket
 from binascii import hexlify
 
 _log = logging.getLogger(__name__)
+
+
+def _gethostname():
+    hostname = socket.gethostname()
+    return hostname.replace('/', '\\057').replace(':', '\\072')
 
 
 def _getuid():
     now = str(time.time()).split('.')
     urandom = hexlify(os.urandom(5)).decode()
     return '{}.M{}R{}P{}.{}'.format(now[0], now[1], urandom,
-                                    os.getpid(), gethostname())
+                                    os.getpid(), _gethostname())
 
 
 def deliver(maildir, lines):
