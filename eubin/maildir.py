@@ -16,9 +16,10 @@ def _gethostname():
 
 
 def _getuid():
-    now = str(time.time()).split('.')
+    now = time.time()
+    sec, usec = int(now), int((now % 1) * 100000)
     urandom = hexlify(os.urandom(5)).decode()
-    return '{}.M{}R{}P{}.{}'.format(now[0], now[1], urandom,
+    return '{}.M{}R{}P{}.{}'.format(sec, usec, urandom,
                                     os.getpid(), _gethostname())
 
 
