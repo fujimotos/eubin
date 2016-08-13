@@ -17,7 +17,7 @@ import glob
 from getopt import getopt
 from configparser import ConfigParser
 
-from .util import get_client, lock_exnb
+from .util import get_client, lock_exnb, get_logpath
 
 _log = logging.getLogger(__name__)
 
@@ -59,9 +59,8 @@ def fetch_new_mail(config_path):
         leavemax = int(retrieval['leavemax'])
 
     if retrieval.getboolean('leavecopy'):
-        basedir, filename = os.path.split(config_path)
-        logpath = os.path.join(basedir, '.{}.state'.format(filename))
-        client.fetch_copy(dest, logpath=logpath, leavemax=leavemax)
+        logpath = get_logpath(config_path)
+        client.fetch_copy(dest, logpath, leavemax)
     else:
         client.fetch(dest)
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import fcntl
 
 from . import pop3
@@ -30,3 +31,9 @@ def lock_exnb(fp):
     except BlockingIOError:
         return -1
     return 0
+
+
+def get_logpath(config_path):
+    head, tail = os.path.split(config_path)
+    name = '.{}.state'.format(tail)
+    return os.path.join(head, name)
