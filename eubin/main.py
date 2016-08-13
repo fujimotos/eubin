@@ -16,9 +16,8 @@ import signal
 import glob
 from getopt import getopt
 from configparser import ConfigParser
-from fcntl import flock, LOCK_NB, LOCK_EX
 
-from .util import get_client
+from .util import get_client, lock_exnb
 
 _log = logging.getLogger(__name__)
 
@@ -30,11 +29,9 @@ def fetch_new_mail(config_path):
     """Go to POP3 server and download new messages."""
     # Acquire an exclusive lock
     config_file = open(config_path, 'r')
-    try:
-        flock(config_file, (LOCK_EX | LOCK_NB))
-    except BlockingIOError:
-        _log.error('already running for "%s"', config_path)
-        return
+
+    if lock_exnb(config_file) != 0:
+        return _log.error('already running for "%s"', config_path)
 
     # Parse config
     config = ConfigParser(inline_comment_prefixes=('#',))
@@ -56,12 +53,10 @@ def fetch_new_mail(config_path):
 
     # Do some transaction
     dest = os.path.expanduser(retrieval['dest'])
-    leavemax = retrieval.get('leavemax', '')
 
-    if leavemax.isdigit():
-        leavemax = int(leavemax)
-    else:
-        leavemax = None
+    leavemax = None
+    if retrieval.get('leavemax'):
+        leavemax = int(retrieval['leavemax'])
 
     if retrieval.getboolean('leavecopy'):
         basedir, filename = os.path.split(config_path)

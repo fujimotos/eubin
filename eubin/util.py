@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import fcntl
+
 from . import pop3
 
 
@@ -17,3 +19,14 @@ def get_client(config):
     if security.getboolean('starttls'):
         client.stls()
     return client
+
+
+def lock_exnb(fp):
+    """Acquire an exclusive lock on `fp` using flock.
+       Return 0 on success, -1 on error.
+    """
+    try:
+        fcntl.flock(fp, (fcntl.LOCK_EX | fcntl.LOCK_NB))
+    except BlockingIOError:
+        return -1
+    return 0
