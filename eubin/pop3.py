@@ -65,6 +65,14 @@ class Client:
         _log.info('%s messages retrieved (%s bytes)',
                   len(retrieved), sum(retrieved))
 
+    def get_capability(self):
+        return self.pop3.capa()
+
+    def check_apop(self):
+        welcome = self.pop3.getwelcome()
+        m = self.pop3.timestamp.match(welcome)
+        return (m is not None)
+
     def quit(self):
         self.pop3.quit()
 

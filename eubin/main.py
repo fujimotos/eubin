@@ -17,7 +17,7 @@ import glob
 from getopt import getopt
 from configparser import ConfigParser
 
-from .util import get_client, lock_exnb, get_logpath
+from .util import get_client, lock_exnb, get_logpath, sprint
 
 _log = logging.getLogger(__name__)
 
@@ -69,16 +69,50 @@ def fetch_new_mail(config_path):
     config_file.close()
 
 
+def check_capability(config_path):
+    config = ConfigParser(inline_comment_prefixes=('#',))
+    config.read(config_path)
+
+    client = get_client(config)
+    sprint('Support APOP login?', client.check_apop())
+
+    try:
+        capa = client.get_capability()
+    except Exception:
+        return _log.error('CAPA command is not supported')
+
+    sprint('Support UIDL (unique-id listing)?',  ('UIDL' in capa))
+    sprint('Support STLS (Start-TLS)?', ('STLS' in capa))
+
+    if 'SASL' in capa:
+        sasl = ', '.join(capa['SASL'])
+        sprint('Available SASL auth methods are', sasl)
+
+    if 'EXPIRE' in capa:
+        if capa['EXPIRE'][0] == '0':
+            sprint('Leaving messages permitted by policy?', False)
+        else:
+            sprint('Leaving messages permitted by policy?', True)
+            sprint('Retention days for messages', capa['EXPIRE'])
+
+    if 'LOGIN-DELAY' in capa:
+        sprint('Minimum seconds between logins',
+               '{} sec'.format(capa['LOGIN-DELAY']))
+
+
 if __name__ == '__main__':
     debug_level = logging.INFO
+    handler = fetch_new_mail
 
-    opts, args = getopt(sys.argv[1:], 'vqh',
-                        ('verbose', 'quiet', 'help', 'version'))
+    opts, args = getopt(sys.argv[1:], 'cvqh',
+                        ('check', 'verbose', 'quiet', 'help', 'version'))
     for key, val in opts:
         if key in ('-v', '--verbose'):
             debug_level -= 10
         elif key in ('-q', '--quiet'):
             debug_level += 10
+        elif key in ('-c', '--check'):
+            handler = check_capability
         elif key in ('-h', '--help'):
             print(__doc__, file=sys.stderr)
             sys.exit(0)
@@ -95,4 +129,4 @@ if __name__ == '__main__':
         targets = glob.iglob(os.path.join(BASEDIR, '*.conf'))
 
     for config_path in targets:
-        fetch_new_mail(config_path)
+        handler(config_path)

@@ -37,3 +37,9 @@ def get_logpath(config_path):
     head, tail = os.path.split(config_path)
     name = '.{}.state'.format(tail)
     return os.path.join(head, name)
+
+
+def sprint(msg, resp):
+    if isinstance(resp, bool):
+        resp = {True: 'yes', False: 'no'}[resp]
+    print('{: <50} ... {}'.format(msg, resp))
