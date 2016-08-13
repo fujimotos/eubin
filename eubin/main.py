@@ -18,7 +18,7 @@ from getopt import getopt
 from configparser import ConfigParser
 from fcntl import flock, LOCK_NB, LOCK_EX
 
-from . import pop3
+from .util import get_client
 
 _log = logging.getLogger(__name__)
 
@@ -41,7 +41,6 @@ def fetch_new_mail(config_path):
     config.readfp(config_file)
 
     # Expand sections
-    server = config['server']
     account = config['account']
     retrieval = config['retrieval']
     security = config['security']
@@ -50,17 +49,7 @@ def fetch_new_mail(config_path):
     signal.alarm(retrieval.getint('timeout', 0))
 
     # Initiate the connection
-    host, port = server['host'], server['port']
-
-    if security.getboolean('overssl'):
-        client = pop3.ClientSSL(host, port)
-    else:
-        client = pop3.Client(host, port)
-
-    if security.getboolean('starttls'):
-        client.stls()
-
-    # Authorization
+    client = get_client(config)
     client.login(user=account['user'],
                  password=account['pass'],
                  apop=security.getboolean('apop'))
