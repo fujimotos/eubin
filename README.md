@@ -59,6 +59,7 @@ port = 995
 [account]
 user = example@gmail.com
 pass = password
+# pass_eval = gpg2 --batch -q -d my-password.gpg
 
 [retrieval]
 dest = ~/Mail/

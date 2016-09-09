@@ -17,7 +17,7 @@ import glob
 from getopt import getopt
 from configparser import ConfigParser
 
-from .util import get_client, lock_exnb, get_logpath
+from .util import get_client, get_password, lock_exnb, get_logpath
 
 _log = logging.getLogger(__name__)
 
@@ -38,7 +38,6 @@ def fetch_new_mail(config_path):
     config.readfp(config_file)
 
     # Expand sections
-    account = config['account']
     retrieval = config['retrieval']
     security = config['security']
 
@@ -47,8 +46,8 @@ def fetch_new_mail(config_path):
 
     # Initiate the connection
     client = get_client(config)
-    client.login(user=account['user'],
-                 password=account['pass'],
+    client.login(user=config['account']['user'],
+                 password=get_password(config),
                  apop=security.getboolean('apop'))
 
     # Do some transaction
