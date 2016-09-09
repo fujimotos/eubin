@@ -2,6 +2,8 @@
 
 import os
 import fcntl
+import shlex
+from subprocess import check_output
 
 from . import pop3
 
@@ -20,6 +22,19 @@ def get_client(config):
     if security.getboolean('starttls'):
         client.stls()
     return client
+
+
+def get_password(config):
+    """Get the password for authentication"""
+    def eval_password(cmd):
+        secret = check_output(shlex.split(cmd), universal_newlines=True)
+        return secret.rstrip('\n')
+
+    if 'pass_eval' in config['account']:
+        secret = eval_password(config['account']['pass_eval'])
+    else:
+        secret = config['account']['pass']
+    return secret
 
 
 def lock_exnb(fp):
