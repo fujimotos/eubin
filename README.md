@@ -1,7 +1,13 @@
-Eubin
+eubin
 =====
 
-Eubin is a dumb mail retriever which only supports POP3 and Maildir.
+eubin is a dumb mail retriever which only supports POP3 and Maildir.
+
+**Why eubin?**
+
+ 1. Support `pass_eval` option for not storing passwords in plaintext.
+ 2. Sane SSL handling. It simply delegates SSL settings to
+    `ssl.create_default_context()` to avoid stupid mistakes.
 
 Requirements
 ------------
