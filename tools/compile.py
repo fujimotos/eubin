@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from zipfile import ZipFile
+from zipfile import ZipFile, ZIP_DEFLATED
 import io
 import sys
 import glob
@@ -24,7 +24,7 @@ if __name__ == '__main__':
     binbuff = io.BytesIO()
 
     # Bundling modules
-    with ZipFile(binbuff, mode='w') as zipfile:
+    with ZipFile(binbuff, mode='w', compression=ZIP_DEFLATED) as zipfile:
         for path in glob.glob('eubin/*.py'):
             zipfile.write(path)
 
