@@ -21,7 +21,7 @@ from .util import get_client, get_password, lock_exnb, get_logpath
 
 _log = logging.getLogger(__name__)
 
-VERSION = '1.2.0'
+VERSION = '1.2.1'
 BASEDIR = os.path.expanduser('~/.eubin')
 
 
