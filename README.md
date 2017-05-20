@@ -25,7 +25,9 @@ Feature
 
 *Small system footprint*
 
- * The whole program is a single-file binary with 9kb in size.
+ * The whole program is a single-file binary with ~~9kb in size.~~  
+    * As of v1.2.1, it's roughly *4kb* in size (thanks to the glorious zip
+      compression).
  * So you can purge the software in a heartbeat if you find it useless.
 
 *Sane TLS support*
