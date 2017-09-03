@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import poplib
 import ssl
 import logging

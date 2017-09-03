@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """Usage: eubin [-v] [-q] [-h] [--version] [config_file]
 
 options:
