@@ -1,45 +1,30 @@
 eubin
 =====
 
-`eubin` is a humble mail retriever. It fetches emails from a remote mail
+`eubin` is a tiny mail retriever. It fetches emails from a remote mail
 server (like pop.gmail.com) and delivers them to the local drive for you.
 
-The scope of this program is limited and protocol support is minimal.
-Also there is no plan for it to creep some funky new features. But,
-look and behold, this piece of software does its job very well.
-
-Personally, I've been using `eubin` for years in several environments,
-and it served me very diligently so far. I will happily use this program
-till the entire email culture dies out.
-
-Feature
--------
-
-### Limitations
-
- * Only support Python 3.4 (or later)
- * Only support POP3
- * Only support Maildir
-
-### Some nice things
+### Features
 
 *Small system footprint*
 
- * The whole program is a single-file binary with ~~9kb in size.~~  
-    * As of v1.2.1, it's roughly *4kb* in size (thanks to the glorious zip
-      compression).
- * So you can purge the software in a heartbeat if you find it useless.
+ * The whole executable is a single-file binary with 4kb in size.
 
 *Sane TLS support*
 
- * Encryption is hard.
- * Eubin solves this problem by simply delegating to `ssl.create_default_context()`.
- * This should provide you not-so-much-terrible cryptographic choices.
+ * Eubin delegates the cipher choice to `ssl.create_default_context()`.
+ * This should provide moderate, predicatable security settings.
 
-*Healthy password management*
+*Easy Password Manager Integration*
 
- * It can integrate with many password managers via `pass_eval` directive.
- * So you can avoid storing the password in plaintext.
+ * Eubin integrates well with many password managers via `pass_eval` directive.
+
+### Limitations
+
+ * Support Python 3.4 (or later)
+ * Only support POP3
+ * Only support Maildir
+
 
 How to install
 --------------
@@ -121,6 +106,6 @@ by just removing it:
 
     $ sudo rm /usr/local/bin/eubin
 
-Also you might want to clean up the config directory:
+Also you might want to clean up the configuration directory:
 
     $ rm -r ~/.eubin
