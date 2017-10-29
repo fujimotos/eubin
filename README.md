@@ -1,8 +1,8 @@
 eubin
 =====
 
-`eubin` is a tiny mail retriever. It fetches emails from a remote mail
-server (like pop.gmail.com) and delivers them to the local drive for you.
+`eubin` is a tiny mail retriever. It connects to a remote POP3 server
+(like pop.gmail.com) and retrieves your emails to the local drive.
 
 ### Features
 
