@@ -49,9 +49,14 @@ class Client:
             msgnum, uid = int(tokens[0]), tokens[1]
 
             if uid not in prev_state:
-                msg, lines, octet = self.pop3.retr(msgnum)
-                maildir.deliver(destdir, lines)
-                retrieved.append(octet)
+                try:
+                    msg, lines, octet = self.pop3.retr(msgnum)
+                    maildir.deliver(destdir, lines)
+                    retrieved.append(octet)
+                except Exception as e:
+                    _log.error("Failed to retrieve a message '%s' (%s)",
+                               uid.decode(), str(e))
+                    continue
 
             # Leave last N messages on the spool.
             if leavemax and msgnum <= (count - leavemax):
