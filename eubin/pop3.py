@@ -7,6 +7,7 @@ from . import statelog
 
 _log = logging.getLogger(__name__)
 
+poplib._MAXLINE = 8192  # Override the limit to prevent errors
 
 class Client:
     def __init__(self, host, port=110):
