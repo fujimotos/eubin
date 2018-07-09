@@ -13,59 +13,96 @@ import os
 import logging
 import signal
 import glob
+import shlex
+import fcntl
 import getopt
-from configparser import ConfigParser
+import subprocess
+import configparser
 
-from .util import get_client, get_password, lock_exnb, get_logpath
+from .pop3 import Client, ClientSSL
 
 _log = logging.getLogger(__name__)
 
 VERSION = '1.2.1'
 BASEDIR = os.path.expanduser('~/.eubin')
 
+def lock_exnb(fp):
+    try:
+        fcntl.flock(fp, (fcntl.LOCK_EX | fcntl.LOCK_NB))
+    except BlockingIOError:
+        return -1
+    return 0
 
-def fetch_new_mail(config_path):
-    """Go to POP3 server and download new messages."""
-    # Acquire an exclusive lock
-    config_file = open(config_path, 'r')
+def pass_eval(cmd):
+    res = subprocess.check_output(shlex.split(cmd), universal_newlines=1)
+    return res.rstrip('\n')
 
-    if lock_exnb(config_file) != 0:
-        return _log.error('already running for "%s"', config_path)
+def get_logpath(config_path):
+    head, tail = os.path.split(config_path)
+    name = '.{}.state'.format(tail)
+    return os.path.join(head, name)
 
-    # Parse config
-    config = ConfigParser(inline_comment_prefixes=('#',))
-    config.readfp(config_file)
+def load_config(config_path):
+    config = configparser.ConfigParser(inline_comment_prefixes=('#',))
+    with open(config_path, 'r') as fp:
+        config.readfp(fp)
 
-    # Expand sections
-    retrieval = config['retrieval']
-    security = config['security']
+    if 'pass_eval' in config['account']:
+        password = pass_eval(config['account']['pass_eval'])
+    else:
+        password = config['account']['pass']
 
-    # Setup timer
-    signal.alarm(retrieval.getint('timeout', 0))
-
-    # Initiate the connection
-    client = get_client(config)
-    client.login(user=config['account']['user'],
-                 password=get_password(config),
-                 apop=security.getboolean('apop'))
-
-    # Do some transaction
-    dest = os.path.expanduser(retrieval['dest'])
+    dest = os.path.expanduser(config['retrieval']['dest'])
 
     leavemax = None
-    if retrieval.get('leavemax'):
+    if config['retrieval'].get('leavemax'):
         leavemax = int(retrieval['leavemax'])
 
-    if retrieval.getboolean('leavecopy'):
-        logpath = get_logpath(config_path)
-        client.fetch_copy(dest, logpath, leavemax)
+    return {
+        'host': config['server']['host'],
+        'port': config['server']['port'],
+        'user': config['account']['user'],
+        'password': password,
+        'apop': config['security'].getboolean('apop'),
+        'overssl': config['security'].getboolean('overssl'),
+        'starttls': config['security'].getboolean('starttls'),
+        'timeout': config['retrieval'].getint('timeout', 0),
+        'leavecopy': config['retrieval'].getboolean('leavecopy'),
+        'dest': dest,
+        'leavemax': leavemax,
+        'logpath': get_logpath(config_path),
+    }
+
+def fetch_new_mail(config_path):
+    lockfile = open(config_path, 'r')
+
+    if lock_exnb(lockfile):
+        return _log.error('already running for "%s"', config_path)
+
+    conf = load_config(config_path)
+
+    signal.alarm(conf['timeout'])
+
+    if conf['overssl']:
+        client = ClientSSL(conf['host'], conf['port'])
     else:
-        client.fetch(dest)
+        client = Client(conf['host'], conf['port'])
+
+    if conf['starttls']:
+        client.stls()
+
+    client.login(user=conf['user'],
+                 password=conf['password'],
+                 apop=conf['apop'])
+
+    if conf['leavecopy']:
+        client.fetch_copy(conf['dest'], conf['logpath'], conf['leavemax'])
+    else:
+        client.fetch(conf['dest'])
 
     client.quit()
     signal.alarm(0)
-    config_file.close()
-
+    lockfile.close()
 
 def main():
     debug_level = logging.INFO
