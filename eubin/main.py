@@ -75,8 +75,9 @@ def load_config(config_path):
     }
 
 def fetch_new_mail(config_path):
-    lockfile = open(config_path, 'r')
+    _log.debug('--------- %s ---------', os.path.basename(config_path))
 
+    lockfile = open(config_path, 'r')
     if lock_exnb(lockfile):
         return _log.error('already running for "%s"', config_path)
 
