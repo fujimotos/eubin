@@ -1,10 +1,11 @@
-"""Usage: eubin [-v] [-q] [-h] [--version] [config_file]
+"""Usage: eubin [-qhvV]
 
-options:
-  -v/--verbose  - display debugging messages to stderr.
-  -q/--quiet    - suppress (most of) warning messages.
-  -h/--help     - print this message.
-  --version     - output version information
+Options:
+
+  -h  - Print this help message and exit
+  -q  - Quiet mode. Cause eubin to suppress messages.
+  -v  - Verbose mode. Cause eubin to output debugging messages.
+  -V  - Show the software version and exit
 """
 
 import sys
@@ -12,7 +13,7 @@ import os
 import logging
 import signal
 import glob
-from getopt import getopt
+import getopt
 from configparser import ConfigParser
 
 from .util import get_client, get_password, lock_exnb, get_logpath
@@ -66,22 +67,21 @@ def fetch_new_mail(config_path):
     config_file.close()
 
 
-if __name__ == '__main__':
+def main():
     debug_level = logging.INFO
 
-    opts, args = getopt(sys.argv[1:], 'vqh',
-                        ('verbose', 'quiet', 'help', 'version'))
+    opts, args = getopt.getopt(sys.argv[1:], 'hqvV')
     for key, val in opts:
-        if key in ('-v', '--verbose'):
-            debug_level -= 10
-        elif key in ('-q', '--quiet'):
-            debug_level += 10
-        elif key in ('-h', '--help'):
+        if key == '-h':
             print(__doc__, file=sys.stderr)
-            sys.exit(0)
-        elif key in ('--version',):
+            return 0
+        elif key == '-q':
+            debug_level += 10
+        elif key == '-v':
+            debug_level -= 10
+        elif key == '-V':
             print('eubin {}'.format(VERSION), file=sys.stderr)
-            sys.exit(0)
+            return 0
 
     logging.basicConfig(level=debug_level, style='{',
                         format='eubin[{levelname}]: {message}')
@@ -93,3 +93,6 @@ if __name__ == '__main__':
 
     for config_path in targets:
         fetch_new_mail(config_path)
+
+if __name__ == '__main__':
+    sys.exit(main())
