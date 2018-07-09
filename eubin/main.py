@@ -66,6 +66,7 @@ def load_config(config_path):
         'apop': config['security'].getboolean('apop'),
         'overssl': config['security'].getboolean('overssl'),
         'starttls': config['security'].getboolean('starttls'),
+        'noverifycert': config['security'].getboolean('noverifycert'),
         'timeout': config['retrieval'].getint('timeout', 0),
         'leavecopy': config['retrieval'].getboolean('leavecopy'),
         'dest': dest,
@@ -84,7 +85,7 @@ def fetch_new_mail(config_path):
     signal.alarm(conf['timeout'])
 
     if conf['overssl']:
-        client = ClientSSL(conf['host'], conf['port'])
+        client = ClientSSL(conf['host'], conf['port'], conf['noverifycert'])
     else:
         client = Client(conf['host'], conf['port'])
 

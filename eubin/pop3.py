@@ -74,7 +74,13 @@ class Client:
 
 
 class ClientSSL(Client):
-    def __init__(self, host, port=995):
+    def __init__(self, host, port, noverifycert):
         _log.info('Connect to %s:%s [SSL=True]', host, port)
         context = ssl.create_default_context()
+
+        if noverifycert:
+            _log.info('Skip verifying the server certificate [INSECURE]')
+            context.check_hostname = False
+            context.verify_mode = ssl.CERT_NONE
+
         self.pop3 = poplib.POP3_SSL(host, port, context=context)
