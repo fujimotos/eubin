@@ -56,7 +56,7 @@ def load_config(config_path):
 
     leavemax = None
     if config['retrieval'].get('leavemax'):
-        leavemax = int(retrieval['leavemax'])
+        leavemax = int(config['retrieval']['leavemax'])
 
     return {
         'host': config['server']['host'],
