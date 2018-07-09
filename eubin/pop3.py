@@ -9,6 +9,15 @@ _log = logging.getLogger(__name__)
 
 poplib._MAXLINE = 8192  # Override the limit to prevent errors
 
+def humanize(size):
+    if size >= 1048576:
+        res = '%s MB' % int(size / 1048576)
+    elif size >= 1024:
+        res = '%s KB' % int(size / 1024)
+    else:
+        res = '%s Bytes' % int(size)
+    return res
+
 class Client:
     def __init__(self, host, port=110):
         _log.info('Connect to %s:%s [SSL=False]', host, port)
@@ -36,12 +45,12 @@ class Client:
             maildir.deliver(destdir, lines)
             self.pop3.dele(idx+1)
 
-        _log.info('%s messages retrieved (%s bytes)', count, size)
+        _log.info('%s messages retrieved (%s)', count, humanize(size))
 
     def fetch_copy(self, destdir, logpath, leavemax=None):
         count, size = self.pop3.stat()
         _log.debug('Download to "%s" [COPY=True]', destdir)
-        _log.debug('%s messages in maildrop (%s bytes)', count, size)
+        _log.debug('%s messages in maildrop (%s)', count, humanize(size))
 
         prev_state = statelog.load(logpath)
         state, retrieved = set(), []
