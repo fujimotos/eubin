@@ -1,9 +1,9 @@
 import poplib
 import ssl
+import os
 import logging
 import time
 from . import maildir
-from . import statelog
 
 _log = logging.getLogger(__name__)
 
@@ -17,6 +17,20 @@ def humanize(size):
     else:
         res = '%s Bytes' % int(size)
     return res
+
+def statelog_load(path):
+    try:
+        with open(path, 'rb') as fp:
+            return set(line.strip() for line in fp)
+    except FileNotFoundError:
+        return set()
+
+def statelog_save(path, state):
+    tmpfile = path + '.tmp'
+    with open(tmpfile, 'wb') as fp:
+        for uid in sorted(state):
+            fp.write(uid + b'\n')
+    os.rename(tmpfile, path)
 
 class Client:
     def __init__(self, host, port=110):
@@ -52,7 +66,7 @@ class Client:
         _log.debug('Download to "%s" [COPY=True]', destdir)
         _log.debug('%s messages in maildrop (%s)', count, humanize(size))
 
-        prev_state = statelog.load(logpath)
+        prev_state = statelog_load(logpath)
         state, retrieved = set(), []
         for line in self.pop3.uidl()[1]:
             tokens = line.split(b' ', 1)
@@ -74,7 +88,7 @@ class Client:
             else:
                 state.add(uid)
 
-        statelog.save(logpath, state)
+        statelog_save(logpath, state)
         _log.info('%s messages retrieved (%s bytes)',
                   len(retrieved), sum(retrieved))
 
