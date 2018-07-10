@@ -1,6 +1,4 @@
-prefix = /usr/local
-exec_prefix = $(prefix)
-bindir = $(exec_prefix)/bin
+bindir = /usr/local/bin
 
 COMPILE = tools/compile.py
 PYTHON = /usr/bin/env python3
@@ -10,6 +8,7 @@ all: build/eubin
 build/eubin: eubin/*.py
 	mkdir -p build
 	$(COMPILE) -o build/eubin
+	chmod +x build/eubin
 
 clean:
 	rm -f build/eubin
