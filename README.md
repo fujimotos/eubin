@@ -1,30 +1,10 @@
 eubin
 =====
 
-`eubin` is a tiny mail retriever. It connects to a remote POP3 server
-(like pop.gmail.com) and retrieves your emails to the local drive.
+Eubin is a small POP3 client. It connects to a remote POP3 server and retrives
+messages into your local maildir.
 
-### Features
-
-*Small system footprint*
-
- * The whole executable is a single-file binary with 4kb in size.
-
-*Sane TLS support*
-
- * Eubin delegates the cipher choice to `ssl.create_default_context()`.
- * This should provide moderate, predicatable security settings.
-
-*Easy Password Manager Integration*
-
- * Eubin integrates well with many password managers via `pass_eval` directive.
-
-### Limitations
-
- * Support Python 3.4 (or later)
- * Only support POP3
- * Only support Maildir
-
+As of v1.2.1, it requires Python 3.4 (or later).
 
 How to install
 --------------
@@ -36,24 +16,22 @@ Clone the repository and run "make" and "make install".
     $ make
     $ sudo make install
 
-
 Settings
 --------
 
-Eubin will search `$HOME/.eubin/` for configuration files by default.
-The name of configuration files can be anything as long as the extension
-is `.conf`.
+Eubin searches `$HOME/.eubin/` for configuration files. Each configuration file
+should have the suffix `.conf`. Otherwise, it will be ignored.
 
-Each file holds the configuration for a single email account. For
-example, If you have two email accounts, one for work and one for
-personal use, you will have two config files:
+Each file in the directory holds the configuration for a single email account.
+For example, if you have two email accounts, one for work and one for personal
+use, you will have two separate configuration files as follows:
 
     $HOME/
     └─.eubin/
       ├─ personal@mydomain.com.conf
       └─ work@mydomain.com.conf
 
-Here is a full configuration sample:
+Here is a full configuration example:
 
 ```INI
 [server]
@@ -77,35 +55,29 @@ overssl = yes
 starttls = no
 ```
 
-Then create a mail directory to store your emails:
+You need to create the target mail directory before running eubin.
 
     $ mkdir -p ~/mail/{cur,new,tmp}
-
 
 Usage
 -----
 
-1) run eubin
+Just run the `eubin` command to retrieve mails:
 
     $ eubin
 
-2) display the list of command line options:
-
-    $ eubin --help
-
 To run eubin periodically, add the following line to cron:
 
-    */5 * * * * /usr/local/bin/eubin --quiet
+    */5 * * * * /usr/local/bin/eubin -q
 
+How to uninstall
+----------------
 
-Uninstallation
---------------
-
-Eubin is a single-file executable. So you can uninstall the program cleanly
-by just removing it:
+Eubin is a single-file executable. So you can uninstall eubin cleanly just by
+removing the executable from your PATH.
 
     $ sudo rm /usr/local/bin/eubin
 
-Also you might want to clean up the configuration directory:
+Also you might want to remove the configuration directory:
 
     $ rm -r ~/.eubin
