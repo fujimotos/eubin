@@ -1,0 +1,41 @@
+
+    EUBIN - A decent POP3 client
+
+Eubin is a Python script to fetch emails from remote POP3 servers.
+It supports secure retrieval though SSL/TLS. Also it integrates well
+with external password managers (like pass).
+
+    How to Install
+
+Extract files from the archive and run make && make install.
+
+ $ tar -xf eubin-1.2.1.tgz
+ $ cd eubin
+ $ make && sudo make install
+
+You'll see an executable eubin installed in /usr/local/bin/.
+
+    Configuration
+
+First, create ".eubin" directory in your home path.
+
+Copy the example configuration file (example@gmail.com.conf) there
+and rename it to "your-email@address.conf". Then edit its content
+to suit your email server.
+
+If you have more than one email account, create a separate
+configuration file for each account.
+
+    How to Use Eubin
+
+Just run eubin from your command line.
+
+ $ eubin
+ eubin[INFO]: Connect to mail.example.com:995 [SSL=True]
+ eubin[INFO]: 0 messages retrieved (0 bytes)
+
+If you need more verbose outputs, use "-v" option.
+
+For more details on eubin, visit the following page:
+
+    https://ceptord.net/20181212-eubin.html
